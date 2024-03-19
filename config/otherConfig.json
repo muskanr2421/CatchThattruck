@@ -1,0 +1,16 @@
+ {
+  "SMTP" : {
+    "user" : "cisbackend@gmail.com",
+    "password" : "hkhg cjkv kdla fvpd"
+  },
+  "header": {
+    "lang_id": "lang_id",
+    "token": "token",
+    "secret_key": "secret_key"
+  },
+  "common": {
+    "algo": "HS256"
+  }
+}
+
+

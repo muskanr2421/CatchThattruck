@@ -1,0 +1,182 @@
+[
+    {
+        "id": "1",
+        "city": "Mumbai",
+        "state": "Maharashtra",
+        "Country": "India",
+        "CountryCode": "IN",
+        "DialCode": "+91",
+        "PhoneNumberLimit": 10
+    },
+    {
+        "id": "2",
+        "city": "New York",
+        "state": "New York",
+        "Country": "United States",
+        "CountryCode": "US",
+        "DialCode": "+1",
+        "PhoneNumberLimit": 10
+    },
+    {
+        "id": "3",
+        "city": "London",
+        "state": "",
+        "Country": "United Kingdom",
+        "CountryCode": "GB",
+        "DialCode": "+44",
+        "PhoneNumberLimit": 11
+    },
+    {
+        "id": "4",
+        "city": "Paris",
+        "state": "",
+        "Country": "France",
+        "CountryCode": "FR",
+        "DialCode": "+33",
+        "PhoneNumberLimit": 9
+    },
+    {
+        "id": "5",
+        "city": "Tokyo",
+        "state": "",
+        "Country": "Japan",
+        "CountryCode": "JP",
+        "DialCode": "+81",
+        "PhoneNumberLimit": 11
+    },
+    {
+        "id": "6",
+        "city": "Sydney",
+        "state": "New South Wales",
+        "Country": "Australia",
+        "CountryCode": "AU",
+        "DialCode": "+61",
+        "PhoneNumberLimit": 9
+    },
+    {
+        "id": "7",
+        "city": "Rio de Janeiro",
+        "state": "Rio de Janeiro",
+        "Country": "Brazil",
+        "CountryCode": "BR",
+        "DialCode": "+55",
+        "PhoneNumberLimit": 9
+    },
+    {
+        "id": "8",
+        "city": "Berlin",
+        "state": "",
+        "Country": "Germany",
+        "CountryCode": "DE",
+        "DialCode": "+49",
+        "PhoneNumberLimit": 15
+    },
+    {
+        "id": "9",
+        "city": "Moscow",
+        "state": "",
+        "Country": "Russia",
+        "CountryCode": "RU",
+        "DialCode": "+7",
+        "PhoneNumberLimit": 10
+    },
+    {
+        "id": "10",
+        "city": "Beijing",
+        "state": "",
+        "Country": "China",
+        "CountryCode": "CN",
+        "DialCode": "+86",
+        "PhoneNumberLimit": 11
+    },
+    {
+        "id": "11",
+        "city": "Cairo",
+        "state": "",
+        "Country": "Egypt",
+        "CountryCode": "EG",
+        "DialCode": "+20",
+        "PhoneNumberLimit": 11
+    },
+    {
+        "id": "12",
+        "city": "Rome",
+        "state": "",
+        "Country": "Italy",
+        "CountryCode": "IT",
+        "DialCode": "+39",
+        "PhoneNumberLimit": 12
+    },
+    {
+        "id": "13",
+        "city": "Mexico City",
+        "state": "",
+        "Country": "Mexico",
+        "CountryCode": "MX",
+        "DialCode": "+52",
+        "PhoneNumberLimit": 10
+    },
+    {
+        "id": "14",
+        "city": "Toronto",
+        "state": "Ontario",
+        "Country": "Canada",
+        "CountryCode": "CA",
+        "DialCode": "+1",
+        "PhoneNumberLimit": 10
+    },
+    {
+        "id": "15",
+        "city": "Dubai",
+        "state": "",
+        "Country": "United Arab Emirates",
+        "CountryCode": "AE",
+        "DialCode": "+971",
+        "PhoneNumberLimit": 10
+    },
+    {
+        "id": "16",
+        "city": "Singapore",
+        "state": "",
+        "Country": "Singapore",
+        "CountryCode": "SG",
+        "DialCode": "+65",
+        "PhoneNumberLimit": 8
+    },
+    {
+        "id": "17",
+        "city": "Seoul",
+        "state": "",
+        "Country": "South Korea",
+        "CountryCode": "KR",
+        "DialCode": "+82",
+        "PhoneNumberLimit": 11
+    },
+    {
+        "id": "18",
+        "city": "Buenos Aires",
+        "state": "",
+        "Country": "Argentina",
+        "CountryCode": "AR",
+        "DialCode": "+54",
+        "PhoneNumberLimit": 11
+    },
+    {
+        "id": "19",
+        "city": "Istanbul",
+        "state": "",
+        "Country": "Turkey",
+        "CountryCode": "TR",
+        "DialCode": "+90",
+        "PhoneNumberLimit": 10
+    },
+    {
+        "id": "20",
+        "city": "Bangkok",
+        "state": "",
+        "Country": "Thailand",
+        "CountryCode": "TH",
+        "DialCode": "+66",
+        "PhoneNumberLimit": 9
+    }
+]

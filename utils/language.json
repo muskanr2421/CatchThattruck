@@ -1,0 +1,314 @@
+{
+    "username_exist": {
+        "en": "Username already exists",
+        "es": "El nombre de usuario ya existe"
+    },
+    "email_registered": {
+        "en": "Email already registered",
+        "es": "Correo electrónico ya registrado"
+    },
+    "phone_registered": {
+        "en": "Mobile number already registered",
+        "es": "Número de móvil ya registrado"
+    },
+    "account_created": {
+        "en": "Account created successfully",
+        "es": "Cuenta creada exitosamente"
+    },
+    "otp_error": {
+        "en": "Error in sending OTP",
+        "es": "Error al enviar OTP"
+    },
+    "username_not_exist": {
+        "en": "Username does not exist",
+        "es": "El nombre de usuario no existe"
+    },
+    "success_login": {
+        "en": "Login successful",
+        "es": "Inicio de sesión exitoso"
+    },
+    "old_pass_incorrect": {
+        "en": "Old password is incorrect",
+        "es": "La contraseña antigua es incorrecta"
+    },
+    "pass_changed": {
+        "en": "Password changed successfully",
+        "es": "Contraseña cambiada exitosamente"
+    },
+    "device_id": {
+        "en": "Device ID is required",
+        "es": "Se requiere el ID de dispositivo"
+    },
+    "success": {
+        "en": "Success",
+        "es": "Éxito"
+    },
+    "verify_email": {
+        "en": "Verify email",
+        "es": "Verificar correo electrónico"
+    },
+    "email_link": {
+        "en": "Your email verification link is",
+        "es": "Tu enlace de verificación de correo electrónico es"
+    },
+    "pass_incorrect": {
+        "en": "Incorrect password",
+        "es": "Contraseña incorrecta"
+    },
+    "email_not_verified": {
+        "en": "User email not verified",
+        "es": "Correo electrónico del usuario no verificado"
+    },
+    "no_vendor": {
+        "en": "No vendor found",
+        "es": "No se encontró ningún vendedor"
+    },
+    "no_admin": {
+        "en": "No admin found",
+        "es": "No se encontró ningún administrador"
+    },
+    "truck_created": {
+        "en": "Truck created successfully",
+        "es": "Camión creado exitosamente"
+    },
+    "no_truck": {
+        "en": "No truck found",
+        "es": "No se encontró ningún camión"
+    },
+    "no_fav_truck": {
+        "en": "No favorite truck found",
+        "es": "No se encontró ningún camión favorito"
+    },
+    "no_user": {
+        "en": "No user found",
+        "es": "No se encontró ningún usuario"
+    },
+    "user_deleted": {
+        "en": "User is deleted by the admin",
+        "es": "El usuario fue eliminado por el administrador"
+    },
+    "user_deactivate": {
+        "en": "User is deactivated by the admin",
+        "es": "El usuario fue desactivado por el administrador"
+    },
+    "user_suspend": {
+        "en": "User is suspended by the admin",
+        "es": "El usuario fue suspendido por el administrador"
+    },
+    "truck_already_fav": {
+        "en": "Truck is already in favorite list",
+        "es": "El camión ya está en la lista de favoritos"
+    },
+    "new_event": {
+        "en": "New event created",
+        "es": "Nuevo evento creado"
+    },
+    "report_submitted": {
+        "en": "Report submitted successfully",
+        "es": "Informe enviado exitosamente"
+    },
+    "report_from_user": {
+        "en": "Report from the user",
+        "es": "Informe del usuario"
+    },
+    "vendor_no_truck": {
+        "en": "Vendor has no such truck",
+        "es": "El vendedor no tiene ese camión"
+    },
+    "truck_details": {
+        "en": "Truck details updated successfully",
+        "es": "Detalles del camión actualizados exitosamente"
+    },
+    "email_not_exist": {
+        "en": "Email does not exist",
+        "es": "El correo electrónico no existe"
+    },
+    "email_exist": {
+        "en": "Email already exists",
+        "es": "El correo electrónico ya existe"
+    },
+    "phone_exist": {
+        "en": "Phone number already exists",
+        "es": "El número de teléfono ya existe"
+    },
+    "feedback": {
+        "en": "Feedback from the vendor",
+        "es": "Retroalimentación del vendedor"
+    },
+    "feedback_submitted": {
+        "en": "Feedback submitted successfully",
+        "es": "Retroalimentación enviada exitosamente"
+    },
+    "details_updated": {
+        "en": "Details updated successfully",
+        "es": "Detalles actualizados exitosamente"
+    },
+    "vendor_cannot_manage": {
+        "en": "Vendor cannot manage more than 15 trucks",
+        "es": "El vendedor no puede gestionar más de 15 camiones"
+    },
+    "forgot_username": {
+        "en": "Forgot username",
+        "es": "Olvidó el nombre de usuario"
+    },
+    "your_username": {
+        "en": "Your username is",
+        "es": "Tu nombre de usuario es"
+    },
+    "sent_username": {
+        "en": "Username sent to your email ID",
+        "es": "Nombre de usuario enviado a tu ID de correo electrónico"
+    },
+    "truck_deactivate": {
+        "en": "Truck deactivated successfully",
+        "es": "Camión desactivado exitosamente"
+    },
+    "truck_suspend": {
+        "en": "Truck suspended successfully",
+        "es": "Camión suspendido exitosamente"
+    },
+    "truck_activate": {
+        "en": "Truck activated successfully",
+        "es": "Camión activado exitosamente"
+    },
+    "truck_delete": {
+        "en": "Truck deleted successfully",
+        "es": "Camión eliminado exitosamente"
+    },
+    "invalid_details": {
+        "en": "Invalid details",
+        "es": "Detalles inválidos"
+    },
+    "invalid_token": {
+        "en": "Invalid token",
+        "es": "Token inválido"
+    },
+    "token_missing": {
+        "en": "Token is missing",
+        "es": "Falta el token"
+    },
+    "reset_pass": {
+        "en": "Reset password",
+        "es": "Restablecer contraseña"
+    },
+    "reset_pass_otp": {
+        "en": "Your reset password OTP is",
+        "es": "Tu OTP de restablecimiento de contraseña es"
+    },
+    "trucks_fetched": {
+        "en": "Trucks fetched successfully",
+        "es": "Camiones recuperados exitosamente"
+    },
+    "otp_sent": {
+        "en": "OTP sent successfully",
+        "es": "OTP enviado exitosamente"
+    },
+    "otp_not_found": {
+        "en": "OTP not found",
+        "es": "OTP no encontrado"
+    },
+    "otp_invalid": {
+        "en": "Invalid OTP",
+        "es": "OTP inválido"
+    },
+    "otp_verified": {
+        "en": "OTP verified successfully",
+        "es": "OTP verificado exitosamente"
+    },
+    "otp_expired": {
+        "en": "OTP expired",
+        "es": "OTP expirado"
+    },
+    "fav_add": {
+        "en": "Truck added to favorites",
+        "es": "Camión agregado a favoritos"
+    },
+    "fav_remove": {
+        "en": "Truck removed from favorites",
+        "es": "Camión eliminado de favoritos"
+    },
+    "fav_list": {
+        "en": "Favorite truck list fetched",
+        "es": "Lista de camiones favoritos recuperada"
+    },
+    "no_data": {
+        "en": "No data found",
+        "es": "No se encontraron datos"
+    },
+    "vendors_fetched": {
+        "en": "Vendors fetched successfully",
+        "es": "Vendedores recuperados exitosamente"
+    },
+    "success_rate": {
+        "en": "Truck rated successfully",
+        "es": "Camión calificado exitosamente"
+    },
+    "location_update": {
+        "en": "Location updated successfully",
+        "es": "Ubicación actualizada exitosamente"
+    },
+    "welcome": {
+        "en": "We’re revolutionizing the Ice Cream Truck industry and we are so happy you decided to join us.\nWith this app, your customers get advanced notice as you approach their location. We play a jingle on their phone.\nFinally, you can reach customers sitting inside playing video games or wearing earbuds who want ice cream but have no idea you just drove by.\nWe did the hard part. All you have to do is share. Tell all of your customers about the app and have them add you to their favorite trucks.\nYou can unlock any neighborhood with this app.\nCustomer service is the key.\nWe do require you to have listed prices, give change, and conduct yourself professionally.\nYou may upload a custom avatar to show your location on a map. Until you do, we’ll use a generic default icon. To upload a custom avatar icon, please go to “Update Account” in Account Settings.",
+        "es": "Estamos revolucionando la industria de los camiones de helados y estamos muy contentos de que hayas decidido unirte a nosotros.\nCon esta aplicación, tus clientes reciben un aviso avanzado cuando te acercas a su ubicación. Reproducimos una melodía en su teléfono.\nFinalmente, puedes llegar a clientes que están sentados adentro jugando videojuegos o usando auriculares y que quieren helado pero no tienen idea de que acabas de pasar.\nNosotros hicimos la parte difícil. Todo lo que tienes que hacer es compartir. Cuéntales a todos tus clientes sobre la aplicación y pídeles que te agreguen a sus camiones favoritos.\nPuedes desbloquear cualquier vecindario con esta aplicación.\nEl servicio al cliente es la clave.\nTe pedimos que tengas precios listados, des cambio y te comportes de manera profesional.\nPuedes subir un avatar personalizado para mostrar tu ubicación en un mapa. Hasta que lo hagas, usaremos un icono predeterminado genérico. Para cargar un avatar personalizado, ve a “Actualizar cuenta” en Configuración de la cuenta."
+    },
+    "private_event": {
+        "en": "Customers can request information about private events. Only trucks added to their favorites will receive these requests. \nPart of your profile viewable by the customer will show your minimum dollar amount to provide services to a private event. You may opt out of these requests.",
+        "es": "Los clientes pueden solicitar información sobre eventos privados. Solo los camiones agregados a sus favoritos recibirán estas solicitudes. \nParte de tu perfil visible para el cliente mostrará tu monto mínimo en dólares para proporcionar servicios para un evento privado. Puedes optar por no recibir estas solicitudes."
+    },
+    "proximity": {
+        "en": "We send out two proximity notifications to your customers. The first one lets them know you are in the neighborhood. The second lets them know you are pretty close.",
+        "es": "Enviamos dos notificaciones de proximidad a tus clientes. La primera les informa que estás en el vecindario. La segunda les informa que estás bastante cerca."
+    },
+    "proximity_note": {
+        "en": "Please note: we use a radius for proximity alerts. So if you set the first alert at 1/2 mile, then you’ve made a one mile wide circle where you are centered in the middle and everyone within that circle gets a notification.",
+        "es": "Ten en cuenta: usamos un radio para las alertas de proximidad. Entonces, si configuras la primera alerta a 1/2 milla, habrás creado un círculo de una milla de ancho donde estás en el centro y todos dentro de ese círculo reciben una notificación."
+    }, 
+    "u_turn": {
+        "en": "If you’ve driven past a customer who wants to buy ice cream but missed you, a 'U-Turn' option appears where they can call you back. This option is limited to whatever distance you set. When you exceed this distance, the customer’s 'U-Turn' option goes away.\nJust decide what distance you think is too far to make that 'U-Turn' for a sale.",
+        "es": "Si has pasado junto a un cliente que quiere comprar helado pero te perdió de vista, aparece una opción de 'Giro en U' donde pueden llamarte de vuelta. Esta opción está limitada a la distancia que establezcas. Cuando superas esta distancia, la opción de 'Giro en U' del cliente desaparece.\nSolo decide qué distancia crees que es demasiado lejos para hacer ese 'Giro en U' para una venta."
+    },
+    "add_truck": {
+        "en": "You have successfully added an extra truck. \nPlease note: \nYou are the administrator for this account. Additional truck accounts have limited permissions.\nYour primary account settings are parent settings and cascade down to any additional trucks you have added \nAs administrator, you create and issue login credentials to your drivers.",
+        "es": "Has agregado con éxito un camión adicional. \nTen en cuenta: \nEres el administrador de esta cuenta. Las cuentas de camiones adicionales tienen permisos limitados.\nLos ajustes de cuenta principal son los ajustes principales y se aplican a cualquier camión adicional que hayas añadido \nComo administrador, creas y emites credenciales de inicio de sesión a tus conductores."
+    },
+    "contact": {
+        "en": "If you are experiencing issues with the app, need help setting up your account, or have suggestions for improvement, we’d love to hear from you.",
+        "es": "Si tienes problemas con la aplicación, necesitas ayuda para configurar tu cuenta o tienes sugerencias para mejorar, nos encantaría saber de ti."
+    },
+    "event_created": {
+        "en": "Event created successfully",
+        "es": "Evento creado exitosamente"
+    },
+    "route_create": {
+        "en": "Route created successfully",
+        "es": "Ruta creada exitosamente"
+    },
+    "route_fetch": {
+        "en": "Route fetched successfully",
+        "es": "Ruta recuperada exitosamente"
+    },
+    "no_route": {
+        "en": "No route found for this truck ID",
+        "es": "No se encontró ninguna ruta para este ID de camión"
+    },
+    "route_updated": {
+        "en": "Route updated successfully",
+        "es": "Ruta actualizada exitosamente"
+    },
+    "token_required": {
+        "en": "The token field is mandatory in header.",
+        "es": "El campo token es obligatorio en la cabecera."
+    },
+    "lang_id_required": {
+        "en": "The lang_id field is mandatory in header.",
+        "es": "El campo lang_id es obligatorio en la cabecera."
+    },
+    "ringtone_update": {
+        "en": "Ringtone updated successfully",
+        "es": "Tono de llamada actualizado exitosamente"
+    },
+    "notifi_update": {
+        "en": "Notification status updated successfully",
+        "es": "Estado de notificación actualizado exitosamente"
+    }
+}
