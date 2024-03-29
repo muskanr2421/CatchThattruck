@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npx pm2 kill && npx pm2 start server.js && npx pm2 logs"
+    "start": "npx pm2 kill && npx pm2 start server.js && npx pm2 logs",
+    "renderStart": "node server.js"
   },
   "keywords": [],
   "author": "",
