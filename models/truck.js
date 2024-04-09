@@ -64,16 +64,20 @@ const truck = sequelize.define("truck", {
       defaultValue : false
     },
     min_dollar: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        defaultValue: "0"
     },
     u_turn: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        defaultValue: "0"
     },
     first_alert: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        defaultValue: ".5"
     },
     second_alert: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        defaultValue: ".25"
     },
     last_distance: {
         type: DataTypes.STRING,
@@ -84,8 +88,7 @@ const truck = sequelize.define("truck", {
     freezeTableName: true
 })
 
-favTruck.belongsTo(truck, {foreignKey : 'truck_id'});
-reportData.belongsTo(truck, {foreignKey : 'truck_id'});
+favTruck.belongsTo(truck, {foreignKey : 'truck_id', targetKey: 'truck_id'});
+reportData.belongsTo(truck, {foreignKey : 'truck_id', targetKey: 'truck_id'});
 truck.sync({alter : false})
 module.exports = truck
-

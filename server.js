@@ -1,6 +1,6 @@
 const express = require("express");
 const bodyParser = require('body-parser');
-const port = 8081;
+const port = 8080;
 const cors = require('cors');
 const cron = require('./cron');
 const fs = require('fs');
@@ -79,7 +79,7 @@ app.use('/api/dev', commonRoute);
 io.on('connection', async (socket) => {
   const userId = socket.id;
   console.log("Socket ID : ", userId);
-  let userTruckTimeout, userTimeout, truckTimeout, myInterval;
+  let userTruckTimeout, userTimeout, truckTimeout;
 
   socket.on('API', async (msg) => {
     console.log(msg)
@@ -99,13 +99,6 @@ io.on('connection', async (socket) => {
       if (truckTimeout) {
         clearTimeout(truckTimeout);
       }
-
-      if(myInterval) {
-        clearInterval(myInterval)
-      }
-      myInterval = setInterval(async function () {
-        
-      }, 60000);
 
       const tokenMsg = verifyTokenMsg(data.token);
       if (tokenMsg == "Invalid Token") {
@@ -143,8 +136,6 @@ io.on('connection', async (socket) => {
               } else {
                 return emitError(socket);
               }
-              // getUserTrucks(data.lat, data.long, data.id);
-              //  {"id":"41","lat":"22.719","long":"75.8972","endPoint":"/getUserTrucks"}
               break;
             case '/getUserDetails':
               // await getAllUsersStatus(socket);
@@ -157,7 +148,6 @@ io.on('connection', async (socket) => {
               }
               break;
             case '/stopTrucks':
-              // {"id":"41","lat":"22.719","long":"75.8972","endPoint":"/stop", "ids":"[71, 81]"}
               await stop(data.lat, data.long, data.id, socket);
               break;
             default:
@@ -209,7 +199,6 @@ io.on('connection', async (socket) => {
     clearTimeout(userTruckTimeout);
     clearTimeout(userTimeout);
     clearTimeout(truckTimeout);
-    clearInterval(myInterval)
   });
 });
 
@@ -350,14 +339,14 @@ async function getAllUsersStatus(id, truckLat, truckLong, socket) {
                   var dataL = stopData[data.user_id];
                   if (dataL.hasOwnProperty(id)) {
                     let truckData = await truck.findOne({ attributes: ['second_alert'], where: { truck_id: id}})
-                    const distance = calculateDistanceMiles(truckLat, truckLong, userData.lat, userData.long)
+                    const distance = calculateDistanceMiles(truckLat, truckLong, data.lat, data.long)
                     console.log(`${truckLat}  ${truckLong}  ${data.lat}  ${data.long}`)
-                    console.log(distance)
-                    console.log(truckData.second_alert)
+                    // console.log(distance)
+                    // console.log(truckData.second_alert)
                     if(distance <= truckData.second_alert){
-                      console.log(dataL[id])
+                      // console.log(dataL[id])
                       delete dataL[id];
-                      console.log(stopData)
+                      // console.log(stopData)
                       data.status = 1;
                     } else{
                       data.status = 2;
@@ -592,9 +581,11 @@ function calculateDistanceMiles(lat1, lon1, lat2, lon2) {
 
   const radius = 6371000; // Radius of the Earth in meters
   const distanceInMeters = radius * c;
+  console.log(distanceInMeters)
 
   // Convert meters to feet
   const distanceInMiles = distanceInMeters * 0.000621371;
+  console.log(distanceInMiles)
 
   return distanceInMiles;
 }

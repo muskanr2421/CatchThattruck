@@ -1,7 +1,7 @@
 const sequelize = require('./index')
 const { Sequelize, DataTypes } = require('sequelize')
 const truck = require('./truck')
-
+// Dump20240403
 const favTruck = sequelize.define("favourite_truck", {
     fav_truck_id: {
         type : DataTypes.INTEGER,
@@ -11,7 +11,7 @@ const favTruck = sequelize.define("favourite_truck", {
     truck_id: {
         type: DataTypes.INTEGER,
         references : {
-            model : truck,
+            model : "truck",
             key : 'truck_id',
         }
     },
@@ -30,6 +30,6 @@ const favTruck = sequelize.define("favourite_truck", {
 // truck.hasMany(favTruck , {foreignKey : 'truck_id'} );
 // favTruck.belongsTo(truck, {foreignKey : 'truck_id'});
 
-favTruck.sync({alter : true})
+favTruck.sync({alter : false})
 module.exports = favTruck
 

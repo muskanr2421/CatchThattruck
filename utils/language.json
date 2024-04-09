@@ -252,8 +252,8 @@
         "es": "Estamos revolucionando la industria de los camiones de helados y estamos muy contentos de que hayas decidido unirte a nosotros.\nCon esta aplicación, tus clientes reciben un aviso avanzado cuando te acercas a su ubicación. Reproducimos una melodía en su teléfono.\nFinalmente, puedes llegar a clientes que están sentados adentro jugando videojuegos o usando auriculares y que quieren helado pero no tienen idea de que acabas de pasar.\nNosotros hicimos la parte difícil. Todo lo que tienes que hacer es compartir. Cuéntales a todos tus clientes sobre la aplicación y pídeles que te agreguen a sus camiones favoritos.\nPuedes desbloquear cualquier vecindario con esta aplicación.\nEl servicio al cliente es la clave.\nTe pedimos que tengas precios listados, des cambio y te comportes de manera profesional.\nPuedes subir un avatar personalizado para mostrar tu ubicación en un mapa. Hasta que lo hagas, usaremos un icono predeterminado genérico. Para cargar un avatar personalizado, ve a “Actualizar cuenta” en Configuración de la cuenta."
     },
     "private_event": {
-        "en": "Customers can request information about private events. Only trucks added to their favorites will receive these requests. \nPart of your profile viewable by the customer will show your minimum dollar amount to provide services to a private event. You may opt out of these requests.",
-        "es": "Los clientes pueden solicitar información sobre eventos privados. Solo los camiones agregados a sus favoritos recibirán estas solicitudes. \nParte de tu perfil visible para el cliente mostrará tu monto mínimo en dólares para proporcionar servicios para un evento privado. Puedes optar por no recibir estas solicitudes."
+        "en": "Customers can request information about private events.\nOnly trucks added to their favorites will receive these requests.\n\nPart of your profile viewable by the customer will show your minimum dollar amount to provide services to a private event.\n\nYou may opt out of these requests.",
+        "es": "Los clientes pueden solicitar información sobre eventos privados.\nSolo los camiones agregados a sus favoritos recibirán estas solicitudes.\n\nParte de tu perfil visible para el cliente mostrará tu monto mínimo en dólares para proporcionar servicios para un evento privado.\n\nPuedes optar por no recibir estas solicitudes."
     },
     "proximity": {
         "en": "We send out two proximity notifications to your customers. The first one lets them know you are in the neighborhood. The second lets them know you are pretty close.",
@@ -262,14 +262,14 @@
     "proximity_note": {
         "en": "Please note: we use a radius for proximity alerts. So if you set the first alert at 1/2 mile, then you’ve made a one mile wide circle where you are centered in the middle and everyone within that circle gets a notification.",
         "es": "Ten en cuenta: usamos un radio para las alertas de proximidad. Entonces, si configuras la primera alerta a 1/2 milla, habrás creado un círculo de una milla de ancho donde estás en el centro y todos dentro de ese círculo reciben una notificación."
-    }, 
+    },
     "u_turn": {
-        "en": "If you’ve driven past a customer who wants to buy ice cream but missed you, a 'U-Turn' option appears where they can call you back. This option is limited to whatever distance you set. When you exceed this distance, the customer’s 'U-Turn' option goes away.\nJust decide what distance you think is too far to make that 'U-Turn' for a sale.",
-        "es": "Si has pasado junto a un cliente que quiere comprar helado pero te perdió de vista, aparece una opción de 'Giro en U' donde pueden llamarte de vuelta. Esta opción está limitada a la distancia que establezcas. Cuando superas esta distancia, la opción de 'Giro en U' del cliente desaparece.\nSolo decide qué distancia crees que es demasiado lejos para hacer ese 'Giro en U' para una venta."
+        "en": "If you’ve driven past a customer who wants to buy ice cream but missed you, a 'U-Turn' option appears where they can call you back. This option is limited to whatever distance you set. When you exceed this distance, the customer’s 'U-Turn' option goes away.\n\nJust decide what distance you think is too far to make that 'U-Turn' for a sale.",
+        "es": "Si has pasado junto a un cliente que quiere comprar helado pero te perdió de vista, aparece una opción de 'Giro en U' donde pueden llamarte de vuelta. Esta opción está limitada a la distancia que establezcas. Cuando superas esta distancia, la opción de 'Giro en U' del cliente desaparece.\n\nSolo decide qué distancia crees que es demasiado lejos para hacer ese 'Giro en U' para una venta."
     },
     "add_truck": {
-        "en": "You have successfully added an extra truck. \nPlease note: \nYou are the administrator for this account. Additional truck accounts have limited permissions.\nYour primary account settings are parent settings and cascade down to any additional trucks you have added \nAs administrator, you create and issue login credentials to your drivers.",
-        "es": "Has agregado con éxito un camión adicional. \nTen en cuenta: \nEres el administrador de esta cuenta. Las cuentas de camiones adicionales tienen permisos limitados.\nLos ajustes de cuenta principal son los ajustes principales y se aplican a cualquier camión adicional que hayas añadido \nComo administrador, creas y emites credenciales de inicio de sesión a tus conductores."
+        "en": "You have successfully added an extra truck.\nPlease note: \nYou are the administrator for this account. Additional truck accounts have limited permissions.\nYour primary account settings are parent settings and cascade down to any additional trucks you have added \nAs administrator, you create and issue login credentials to your drivers.",
+        "es": "Has agregado con éxito un camión adicional.\nTen en cuenta: \nEres el administrador de esta cuenta. Las cuentas de camiones adicionales tienen permisos limitados.\nLos ajustes de cuenta principal son los ajustes principales y se aplican a cualquier camión adicional que hayas añadido \nComo administrador, creas y emites credenciales de inicio de sesión a tus conductores."
     },
     "contact": {
         "en": "If you are experiencing issues with the app, need help setting up your account, or have suggestions for improvement, we’d love to hear from you.",
@@ -310,5 +310,21 @@
     "notifi_update": {
         "en": "Notification status updated successfully",
         "es": "Estado de notificación actualizado exitosamente"
+    },
+    "wrong_credentials": {
+        "en": "Wrong Credentials",
+        "es": "Credenciales incorrectas"
+    },
+    "help_content": {
+        "en": "Help Contents",
+        "es": "Contenido de la ayuda"
+    },
+    "route_deleted": {
+        "en": "Route Deleted Successfully",
+        "es": "Ruta eliminada exitosamente"
+    },
+    "primary_truck_delete": {
+        "en": "Primary Truck can not be deleted.",
+        "es": "El camión principal no se puede eliminar."
     }
 }

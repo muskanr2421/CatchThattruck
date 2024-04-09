@@ -5,5 +5,19 @@
     "database": "TruckDb",
     "host": "127.0.0.1",
     "dialect": "mysql"
+  },
+  "dev": {
+    "username": "catchtha1",
+    "password": "DOWNLOAD@2290",
+    "database": "catchtha1",
+    "host": "mysql02",
+    "dialect": "mysql"
+  },
+  "test2": {
+    "username": "Catchthat_onestemsas",
+    "password": "928dc6adb8a44fb5952f7ee1016ceb09b547d1dc",
+    "database": "Catchthat_onestemsas",
+    "host": "6x2.h.filess.io",
+    "dialect": "mysql"
   }
 }

@@ -1,5 +1,5 @@
-const { Sequelize } = require('sequelize');
-const sequelize = require('../models/index');
+const { Sequelize } = require('sequelize')
+const sequelize = require('../models/index')
 const vendor = require("../models/vendor")
 const truck = require("../models/truck")
 const User = require('../models/user')
@@ -15,41 +15,70 @@ const contactData = require("../models/contact_data")
 const route = require("../models/route")
 const avatar = require('../models/avatar')
 
-const md5 = require('md5');
+const md5 = require('md5')
 const jwt = require('jsonwebtoken')
-const crypto = require("crypto");
-const moment = require('moment');
+const crypto = require("crypto")
+const algorithm = 'aes-256-cbc'; //Using AES encryption
+const encryptionKey = "EncryptionKey";
+const moment = require('moment')
 
 const response = require('../utils/response')
 const middleware = require('../common/Utility')
 const config = require('../config/otherConfig.json')
-const language = require('../utils/data.json');
+const language = require('../utils/data.json')
 const city = require("../utils/cities.json")
 const country_code = require("../utils/CountryCodes.json")
+const reportData = require('../models/report_data')
 
 const tokenHeaderKey = config.header.token;
 const langHeaderKey = config.header.lang_id;
 const secretKey = config.header.secret_key;
+
+// Encryption function
+function encrypt(text) {
+    try {
+        const cipher = crypto.createCipher(algorithm, encryptionKey);
+        let encrypted = cipher.update(text, 'utf8', 'hex');
+        encrypted += cipher.final('hex');
+        return encrypted;
+    } catch (error) {
+        console.error('Encryption error:', error);
+        return null; // Return null or throw an error as appropriate
+    }
+}
+
+// Decryption function
+function decrypt(encryptedText) {
+    try {
+        const decipher = crypto.createDecipher(algorithm, encryptionKey);
+        let decrypted = decipher.update(encryptedText, 'hex', 'utf8');
+        decrypted += decipher.final('utf8');
+        return decrypted;
+    } catch (error) {
+        console.error('Decryption error:', error);
+        return null; // Return null or throw an error as appropriate
+    }
+}
 
 const signUp = async(req,res) => {
     try{
         const lang_id = req.header(langHeaderKey)
         const data = req.body;
 
-        let cityData = await cities.findOne({
-            attributes: [ 'state_id' ],
-            where: {
-                city_id: data.city_id
-            }
-        })
+        // let cityData = await cities.findOne({
+        //     attributes: [ 'state_id' ],
+        //     where: {
+        //         city_id: data.city_id
+        //     }
+        // })
 
-        let stateData = await state.findOne({
-            attributes: ['en'],
-            where: {
-                state_id: cityData.state_id
-            }
-        })
-        var stateName = stateData.en
+        // let stateData = await state.findOne({
+        //     attributes: ['en'],
+        //     where: {
+        //         state_id: cityData.state_id
+        //     }
+        // })
+        // var stateName = stateData.en
 
         var info = {
             first_name: data.first_name,
@@ -60,8 +89,8 @@ const signUp = async(req,res) => {
             phone: data.phone,
             country_id: data.country_id,
             company_name: data.company_name,
-            city_id: data.city_id,
-            state: stateName,
+            city: data.city,
+            state: data.state,
             zip_code: data.zip_code,
             password: md5(data.password),
         }
@@ -100,7 +129,7 @@ const signUp = async(req,res) => {
             vendor_id: result.vendor_id,
             truck_name: result.company_name,
             username: result.username+' Primary',
-            password: md5(result.password),
+            password: encrypt(data.password),
             avatar_id: 1,
             is_primary: true
         }
@@ -153,24 +182,23 @@ const login = async (req, res) => {
         }
 
         if(result){
-
-            if(result.is_deleted){
-                return response.sendBadRequestResponse(res, language.user_deleted[lang_id])
-            }
-            if(result.is_blocked){
-                return response.sendBadRequestResponse(res, {message: language.user_deactivate[lang_id]})
-            }
-            if(result.is_suspended){
-                return response.sendBadRequestResponse(res, {message: language.user_suspend[lang_id], reason: vendorData.suspend_msg})
-            }
-            if(result.is_admin){
-                return response.sendBadRequestResponse(res, language.no_vendor[lang_id])
-            }
             if(result.password !== md5(data.password)){
                 return response.sendBadRequestResponse(res, language.pass_incorrect[lang_id])
             }
             if(!result.is_verified){
                 return response.sendBadRequestResponse(res, language.email_not_verified[lang_id])
+            }
+            if(result.is_deleted){
+                return response.sendBadRequestResponse(res, language.user_deleted[lang_id])
+            }
+            if(result.is_blocked){
+                return response.sendBadRequestResponse(res, language.user_deactivate[lang_id])
+            }
+            if(result.is_suspended){
+                return response.sendBadRequestResponse(res, language.user_suspend[lang_id])
+            }
+            if(result.is_admin){
+                return response.sendBadRequestResponse(res, language.no_vendor[lang_id])
             }
 
             // let userData = await User.findOne({ where: { device_id: data.device_id}})
@@ -202,7 +230,7 @@ const login = async (req, res) => {
                 device_id: result.device_id,
                 country_id : typeof (result.country_id) === 'string' ? (result.country_id) : "",
                 company_name: result.company_name,
-                city_id: result.city_id,
+                city: result.city,
                 state: typeof (result.state) === 'string' ? (result.state) : "",
                 zip_code: typeof (result.zip_code) === 'string' ? (result.zip_code) : "",
                 primary_truck_id: primayTruck.truck_id
@@ -220,18 +248,18 @@ const login = async (req, res) => {
                 token: token,
                 data : [info]
             })
-        } else{
+        } else {
+            if(truckExists.password !== encrypt(data.password)){
+                return response.sendBadRequestResponse(res, language.pass_incorrect[lang_id])
+            }
             if(truckExists.is_deleted){
                 return response.sendBadRequestResponse(res, language.user_deleted[lang_id])
             }
             if(truckExists.is_blocked){
-                return res.status(400).send({message: language.user_deactivate[lang_id]})
+                return response.sendBadRequestResponse(res, language.user_deactivate[lang_id])
             }
             if(truckExists.is_suspended){
-                return res.status(400).send({message: language.user_suspend[lang_id], reason: vendorData.suspend_msg})
-            }
-            if(truckExists.password !== md5(data.password)){
-                return response.sendBadRequestResponse(res, language.pass_incorrect[lang_id])
+                return response.sendBadRequestResponse(res, language.user_suspend[lang_id])
             }
                 
             const payload = {
@@ -355,6 +383,7 @@ const getCountryCodes = async(req, res) => {
             //     }
             //   });
             return response.sendSuccessResponseMobile(res, country_code, "Country Codes Fetched")
+
         } else{
             return response.sendBadRequestResponse(res, "lang_id required")
         }
@@ -420,7 +449,7 @@ const forgotPassword = async (req, res) => {
             })       
     
     }catch(err) {
-        console.log(err)
+        console.log("error", err)
         return res.send(err)
     }
 }
@@ -524,7 +553,11 @@ const forgotUsername = async (req, res) => {
             return response.sendBadRequestResponse(res, language.email_not_exist[lang_id])
         }
 
-        middleware.mailSender(req.body.email, language.forgot_username[lang_id], `${language.your_username[lang_id]} ${result.username}`)
+        if(!(emailExists.is_verified)){
+            return response.sendBadRequestResponse(res, language.email_not_verified[lang_id])
+        }
+
+        middleware.mailSender(req.body.email, language.forgot_username[lang_id], `${language.your_username[lang_id]} ${emailExists.username}`)
         .then((data) => {
             return response.sendSuccessResponseMobile(res, [], language.sent_username[lang_id])
         })
@@ -546,25 +579,25 @@ const verifyToken = async (req, res, next) => {
         return response.sendBadRequestResponse(res, language.lang_id_required[lang_id])
     }
 
-    if(token == null) return res.status(400).send({message: language.token_missing[lang_id]})
+    if(token == null) return response.sendBadRequestResponse(res, language.token_missing[lang_id])
 
     jwt.verify(token, secretKey, async (err, user) => {
-        if(err) return res.status(400).send({message: language.invalid_token[lang_id]})
+        if(err) return response.sendBadRequestResponse(res, language.invalid_token[lang_id])
         req.user = user
 
         if(user.vendor_id){
             let vendorData = await vendor.findOne({ where: { vendor_id: user.vendor_id}})
 
             if(!vendorData){
-                return res.status(400).send({ message: language.invalid_token[lang_id] })
+                return response.sendBadRequestResponse(res, language.invalid_token[lang_id])
             }
             
             if(vendorData.is_deleted){
-                return res.status(400).send({message: language.user_deleted[lang_id]})
+                return response.sendBadRequestResponse(res, language.user_deleted[lang_id])
             } else if(vendorData.is_blocked){
-                return res.status(400).send({message: language.user_deactivate[lang_id]})
+                return response.sendBadRequestResponse(res, language.user_deactivate[lang_id])
             } else if(vendorData.is_suspended){
-                return res.status(400).send({message: language.user_suspend[lang_id], reason: vendorData.suspend_msg})
+                return response.sendBadRequestResponse(res, language.user_suspend[lang_id])
             }
         }
     
@@ -572,15 +605,15 @@ const verifyToken = async (req, res, next) => {
             let truckData = await truck.findOne({ where: {truck_id: user.truck_id}})
             
             if(!truckData){
-                return res.status(400).send({ message: language.invalid_token[lang_id] })
+                return response.sendBadRequestResponse(res, language.invalid_token[lang_id])
             }
 
             if(truckData.is_deleted){
-                return res.status(400).send({message: language.user_deleted[lang_id]})
+                return response.sendBadRequestResponse(res, language.user_deleted[lang_id])
             } else if(truckData.is_blocked){
-                return res.status(400).send({message: language.user_deactivate[lang_id]})
+                return response.sendBadRequestResponse(res, language.user_deactivate[lang_id])
             } else if(truckData.is_suspended){
-                return res.status(400).send({message: language.user_suspend[lang_id], reason: truckData.suspend_msg})
+                return response.sendBadRequestResponse(res, language.user_suspend[lang_id])
             }
         }
     
@@ -593,24 +626,24 @@ const editDetails = async (req, res) => {
         const lang_id = req.header(langHeaderKey);
         const token = req.header(tokenHeaderKey);
 
-        const { email, first_name, last_name, phone, company_name, country_id, city_id, zip_code } = req.body;
+        const { email, first_name, last_name, phone, company_name, country_id, city, state, zip_code } = req.body;
         const { email: mail, vendor_id } = req.user;
         console.log(mail)
 
-        let cityData = await cities.findOne({
-            attributes: [ 'state_id' ],
-            where: {
-                city_id: city_id
-            }
-        })
+        // let cityData = await cities.findOne({
+        //     attributes: [ 'state_id' ],
+        //     where: {
+        //         city_id: city_id
+        //     }
+        // })
 
-        let stateData = await state.findOne({
-            attributes: ['en'],
-            where: {
-                state_id: cityData.state_id
-            }
-        })
-        var stateName = stateData.en
+        // let stateData = await state.findOne({
+        //     attributes: ['en'],
+        //     where: {
+        //         state_id: cityData.state_id
+        //     }
+        // })
+        // var stateName = stateData.en
 
         const info = {
             first_name,
@@ -619,8 +652,8 @@ const editDetails = async (req, res) => {
             phone,
             company_name,
             country_id,
-            city_id,
-            state: stateName,
+            city,
+            state,
             zip_code
         };
 
@@ -629,19 +662,23 @@ const editDetails = async (req, res) => {
             if(email !== emailExists.email){
                 return response.sendBadRequestResponse(res, language.email_exist[lang_id])
             }
+            let primayTruck = await truck.findOne({ where: {vendor_id: emailExists.vendor_id, is_primary: true} })
             const dataInfo = {
-                id: emailExists.vendor_id,
+                vendor_id: emailExists.vendor_id,
                 first_name,
                 last_name,
                 username: emailExists.username,
                 email,
                 phone,
                 lang_id,
+                device_id: emailExists.device_id,
+                role_id: 3,
                 country_id,
                 company_name,
-                city_id,
-                state: stateName,
+                city,
+                state,
                 zip_code,
+                primary_truck_id: primayTruck.truck_id
             };
             var phoneExists = await vendor.findOne({ where: { phone: phone }}) 
             if(phoneExists){
@@ -669,8 +706,8 @@ const editDetails = async (req, res) => {
                 phone,
                 company_name,
                 country_id,
-                city_id,
-                state: stateName,
+                city,
+                state,
                 zip_code,
                 is_verified: false
             };
@@ -751,7 +788,7 @@ const addTruck = async (req, res) => {
             vendor_id: vendor_id,
             truck_name: data.truck_name,
             username: data.username,
-            password: md5(data.password),
+            password: encrypt(data.password),
             is_primary: false,
             avatar_id: data.avatar_id
         }
@@ -800,7 +837,7 @@ const editTruck = async (req, res) => {
         const info = {
             truck_name: data.truck_name,
             username: data.username,
-            password: md5(data.password),
+            password: encrypt(data.password),
             avatar_id: data.avatar_id
         }
 
@@ -829,23 +866,76 @@ const editTruck = async (req, res) => {
     }
 }
 
+const deleteTruck = async (req, res) => {
+    try{
+        const lang_id = req.header(langHeaderKey);
+        const { truck_id } = req.body;
+        const vendor_id = req.user.vendor_id;
+
+        if(!truck_id){
+            return response.sendBadRequestResponse(res, language.invalid_details[lang_id])
+        }
+
+        const result = await truck.findOne({
+            where: {
+                truck_id: truck_id, 
+                vendor_id: vendor_id
+            }
+        });
+
+        if (!result) {
+            return response.sendBadRequestResponse(res, language.no_truck[lang_id]);
+        }
+
+        if(result.is_primary){
+            return response.sendBadRequestResponse(res, language.primary_truck_delete[lang_id]);
+        }
+
+        await reportData.destroy({ where: { truck_id: truck_id}})
+        await route.destroy({ where: { truck_id: truck_id}})
+        await favTruck.destroy({where: { truck_id: truck_id}})
+        await truck.destroy({where: { truck_id: truck_id, vendor_id: vendor_id}})
+        return response.sendSuccessResponseMobile(res, [], language.truck_delete[lang_id])
+
+    } catch(err){
+        console.log(err)
+        return res.send(err)
+    }
+}
+
 const getVendorTruck = async (req, res) => {
     try{
         const lang_id = req.header(langHeaderKey);
         const vendor_id = req.user.vendor_id;
 
+        // var text = "111111"
+        // var encrpytedText = encrypt(text)
+        // var decryptedText = decrypt(encrpytedText)
+        // console.log("encrypt", encrpytedText)
+        // console.log("encrypt", decryptedText)
+
         var result = await truck.findAll({
-            attributes: ["truck_id", "truck_name", "username", "avatar_id"],
+            attributes: ["truck_id", "truck_name", "username", "avatar_id", "is_primary", "password"],
             where: {
-                vendor_id: vendor_id,
-                is_primary: false
-            }
+                vendor_id: vendor_id
+            },
+            order: [
+                ['is_primary', 'DESC'], // Sort by is_primary in descending order
+                ['createdAt', 'DESC']   // Then sort by createdAt in descending order
+            ]
         });
 
+        // result.forEach(result => {
+        //     result.password = decrypt(result.password);
+        // });
+        // console.log("Password----->", result)
+        // console.log("Password----->", result.password)
+        // console.log("Password----->", decrypt(result.password))
         for(i in result){
             let avatarResult = await avatar.findOne({
                 where: { avatar_id: result[i].avatar_id }
             })
+            result[i].password = decrypt(result[i].password);
             result[i].dataValues.thumbnail = avatarResult.thumbnail;
             result[i].dataValues.image_url = avatarResult.image_url;
         }
@@ -865,21 +955,18 @@ const getVendorTruck = async (req, res) => {
 const getTranslations = async (req, res) => {
     try{
         const lang_id = req.header(langHeaderKey);
-        let result;
         let transformedResult;
 
+        let result = await translation.findAll({
+            attributes: ["name", "en_value", "es_value"],
+        });
+        
         if(lang_id == "en"){
-            result = await translation.findAll({
-                attributes: ["name", "en_value"],
-            });
             transformedResult = result.reduce((acc, translation) => {
                 acc[translation.name] = translation.en_value;
                 return acc;
               }, {});
         } else{
-            result = await translation.findAll({
-                attributes: ["name", "es_value",],
-            });
             transformedResult = result.reduce((acc, translation) => {
                 acc[translation.name] = translation.es_value;
                 return acc;
@@ -1067,6 +1154,30 @@ const updateRoute = async (req, res) => {
     }
 }
 
+const deleteRoute = async (req, res) => {
+    try{
+        const lang_id = req.header(langHeaderKey);
+        const { truck_id, route_id } = req.body;
+
+        if(!truck_id || !route_id){
+            return response.sendBadRequestResponse(res, language.invalid_details[lang_id])
+        }
+
+        let routeExists = await route.findOne({ where: { truck_id, route_id }})
+        if(!routeExists){
+            return response.sendBadRequestResponse(res, language.no_data[lang_id])
+        }
+        
+        await route.destroy({ where: {truck_id: truck_id, route_id: route_id}})
+
+        return response.sendSuccessResponseMobile(res, [], language.route_deleted[lang_id])
+
+    } catch(err){
+        console.log(err)
+        return res.send(err)
+    }
+}
+
 const vendorOptOut = async (req, res) => {
     try{
         const lang_id = req.header(langHeaderKey);
@@ -1203,6 +1314,7 @@ module.exports = {
     changePassword,
     addTruck,
     editTruck,
+    deleteTruck,
     getVendorTruck,
     getUpdatedCity,
     getTranslations,
@@ -1212,6 +1324,7 @@ module.exports = {
     createRoute,
     getRoute,
     updateRoute,
+    deleteRoute,
     vendorOptOut,
     getTruckAvatar,
     updateAlertRadius,

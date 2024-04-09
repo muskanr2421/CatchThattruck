@@ -153,25 +153,26 @@ const verifyToken = async (req, res, next) => {
     const lang_id = req.header(langHeaderKey)
     const token = req.header(tokenHeaderKey)
 
-    if (token == null) return res.status(400).send({ message: language.token_missing[lang_id] })
+    if (token == null) return response.sendBadRequestResponse(res, language.token_missing[lang_id])
 
     jwt.verify(token, secretKey, async (err, user) => {
-        if (err) return res.status(400).send({ message: language.invalid_token[lang_id] })
+        if (err) return response.sendBadRequestResponse(res, language.invalid_token[lang_id])
         req.user = user
 
         if (user.vendor_id) {
             let vendorData = await vendor.findOne({ where: { vendor_id: user.vendor_id } })
 
             if(!vendorData){
-                return res.status(400).send({ message: language.invalid_token[lang_id] })
+                return response.sendBadRequestResponse(res, language.invalid_token[lang_id])
             }
 
             if (vendorData.is_deleted) {
-                return res.status(400).send({ message: language.user_deleted[lang_id] })
+                
+                return response.sendBadRequestResponse(res, language.user_deleted[lang_id])
             } else if (vendorData.is_blocked) {
-                return res.status(400).send({ message: language.user_deactivate[lang_id] })
+                return response.sendBadRequestResponse(res, language.user_deactivate[lang_id])
             } else if (vendorData.is_suspended) {
-                return res.status(400).send({ message: language.user_suspend[lang_id], reason: vendorData.suspend_msg })
+                return response.sendBadRequestResponse(res, language.user_suspend[lang_id])
             }
         }
 
@@ -179,15 +180,15 @@ const verifyToken = async (req, res, next) => {
             let truckData = await truck.findOne({ where: { truck_id: user.truck_id } })
 
             if(!truckData){
-                return res.status(400).send({ message: language.invalid_token[lang_id] })
+                return response.sendBadRequestResponse(res, language.invalid_token[lang_id])
             }
 
             if (truckData.is_deleted) {
-                return res.status(400).send({ message: language.user_deleted[lang_id] })
+                return response.sendBadRequestResponse(res, language.user_deleted[lang_id])
             } else if (truckData.is_blocked) {
-                return res.status(400).send({ message: language.user_deactivate[lang_id] })
+                return response.sendBadRequestResponse(res, language.user_deactivate[lang_id])
             } else if (truckData.is_suspended) {
-                return res.status(400).send({ message: language.user_suspend[lang_id], reason: truckData.suspend_msg })
+                return response.sendBadRequestResponse(res, language.user_suspend[lang_id])
             }
         }
 

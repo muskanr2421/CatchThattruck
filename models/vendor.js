@@ -28,7 +28,7 @@ const vendor = sequelize.define('vendors', {
     phone: {
       type: DataTypes.BIGINT
     }, 
-    city_id: {
+    city: {
       type: DataTypes.STRING
     },
     password: {

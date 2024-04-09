@@ -39,4 +39,3 @@ const state = sequelize.define("state", {
 city.belongsTo(state, {foreignKey : 'state_id'})
 state.sync({alter : false})
 module.exports = state
-

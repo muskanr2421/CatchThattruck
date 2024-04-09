@@ -62,7 +62,7 @@ const adminLogin = async (req, res) => {
             device_id: result.device_id,
             country_id: typeof (result.country_id) === 'string' ? (result.country_id) : "",
             company_name: result.company_name,
-            city_id: result.city_id,
+            city: result.city,
             state: typeof (result.state) === 'string' ? (result.state) : "",
             zip_code: typeof (result.zip_code) === 'string' ? (result.zip_code) : "",
         }
@@ -258,23 +258,23 @@ const verifyToken = (req, res, next) => {
         return response.sendBadRequestResponse(res, language.lang_id_required[lang_id])
     }
 
-    if (token == null) return res.status(400).send({ message: language.token_missing[lang_id] })
+    if (token == null) return response.sendBadRequestResponse(res, language.token_missing[lang_id])
 
     jwt.verify(token, secretKey, async (err, user) => {
-        if (err) return res.status(400).send({ message: language.invalid_token[lang_id] })
+        if (err) return response.sendBadRequestResponse(res, language.invalid_token[lang_id])
         if (!(user.vendor_id)) {
-            return res.status(400).send({ message: language.invalid_token[lang_id] })
+            return response.sendBadRequestResponse(res, language.invalid_token[lang_id])
         }
         req.user = user
 
         if (!(user.vendor_id)) {
-            return res.status(400).send({ message: language.invalid_token[lang_id] })
+            return response.sendBadRequestResponse(res, language.invalid_token[lang_id])
         }
 
         let vendorData = await vendor.findOne({ where: { vendor_id: user.vendor_id, is_admin: true } })
 
         if (!vendorData) {
-            return res.status(400).send({ message: language.invalid_token[lang_id] })
+            return response.sendBadRequestResponse(res, language.invalid_token[lang_id])
         }
 
         next()

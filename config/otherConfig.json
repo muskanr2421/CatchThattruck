@@ -3,6 +3,10 @@
     "user" : "cisbackend@gmail.com",
     "password" : "hkhg cjkv kdla fvpd"
   },
+  "SMTPLive" : {
+    "user" : "noreply@catchthattruck.com",
+    "password" : "Download@2290"
+  },
   "header": {
     "lang_id": "lang_id",
     "token": "token",

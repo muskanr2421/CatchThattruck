@@ -1,9 +1,9 @@
-const sequelize = require('../models/index');
+const sequelize = require('../models/index')
 const User = require("../models/user")
 const truck = require("../models/truck")
 const vendor = require("../models/vendor")
-const favTruck = require('../models/favourite_truck');
-const rate_truck = require('../models/rate_truck');
+const favTruck = require('../models/favourite_truck')
+const rate_truck = require('../models/rate_truck')
 const privateEvent = require('../models/private_events')
 const report = require('../models/report')
 const report_data = require('../models/report_data')
@@ -429,19 +429,19 @@ const verifyToken = (req, res, next) => {
         return response.sendBadRequestResponse(res, language.lang_id_required[lang_id])
     }
 
-    if (token == null) return res.status(400).send({ message: language.token_missing[lang_id] })
+    if (token == null) return response.sendBadRequestResponse(res, language.token_missing[lang_id])
 
     jwt.verify(token, secretKey, (err, user) => {
-        if (err) return res.status(400).send({ message: language.invalid_token[lang_id] })
+        if (err) return response.sendBadRequestResponse(res, language.invalid_token[lang_id])
         req.user = user
 
         if (!(user.user_id)) {
-            return res.status(400).send({ message: language.invalid_token[lang_id] })
+            return response.sendBadRequestResponse(res, language.invalid_token[lang_id])
         }
 
         let userData = User.findOne({ where: { user_id: user.user_id } })
         if (!userData) {
-            return res.status(400).send({ message: language.invalid_token[lang_id] })
+            return response.sendBadRequestResponse(res, language.invalid_token[lang_id])
         }
 
         next()
@@ -611,6 +611,7 @@ const reportAdmin = async (req, res) => {
         const adminResult = await vendor.findOne({ where: { is_admin: true } })
         const msg = await report.findOne({ where: { id: msg_id } })
 
+        console.log()
         middleware.mailSender(adminResult.email, language.report_from_user[lang_id], `<html>${user_id}<br>${msg[lang_id]}</html>`)
             .then(async (data) => {
                 let reportdata = await report_data.findOne({

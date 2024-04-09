@@ -5,7 +5,7 @@ const config = require('../config/otherConfig.json')
 const admin = require('firebase-admin');
 
 var serviceAccount = require('../catch-that-truck-firebase-adminsdk-ij7zy-04cef22b80.json');
-const rington = require('../models/ringtone');
+const ringtone = require('../models/ringtone');
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -42,15 +42,17 @@ function sendFogotPasswordMail(req, res) {
 const mailSender = async (email,title, body) => {
   try {
       let transporter = nodemailer.createTransport({
-          host: "smtp.gmail.com",
-          auth: {
-              user: config.SMTP.user,
-              pass: config.SMTP.password
-          }
+        host: 'mail.catchthattruck.com',
+        secure: false,
+        auth: {
+          user: "noreply@catchthattruck.com",
+          pass: "Download@2290"
+        },
+        tls: { rejectUnauthorized: false }
       })
 
       let info  = await transporter.sendMail({
-          from: 'cisbackend@gmail.com',
+          from: 'noreply@catchthattruck.com',
           to: `${email}`,
           subject: `${title}`,
           html: `${body}`,

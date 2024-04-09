@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npx pm2 kill && npx pm2 start server.js && npx pm2 logs",
-    "renderStart": "node server.js"
+    "StartLocal": "node server.js"
   },
   "keywords": [],
   "author": "",
