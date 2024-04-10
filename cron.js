@@ -99,8 +99,8 @@ cron.schedule('*/15 * * * *', async function () {
                     type: sequelize.QueryTypes.SELECT,
                 });
                 var truckIds = []
-                console.log("Truck First", trucksFirst)
-                console.log("Truck Second", trucksSecond)
+                // console.log("Truck First", trucksFirst)
+                // console.log("Truck Second", trucksSecond)
 
                 for (const truck of trucksSecond) {
                     truckIds.push(truck.truck_id);
@@ -108,9 +108,9 @@ cron.schedule('*/15 * * * *', async function () {
                 }
 
                 for (const truck of trucksFirst) {
-                    console.log("Truckids--->", truckIds)
+                    // console.log("Truckids--->", truckIds)
                     if(!truckIds.includes(truck.truck_id)){
-                        console.log("Entered")
+                        // console.log("Entered")
                         middleware.CustomNotification("Truck Alert", `${truck.truck_name} is in your neighbourhood`, data.fcm_token)
                     }
                 }
