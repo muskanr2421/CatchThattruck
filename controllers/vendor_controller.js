@@ -21,6 +21,9 @@ const crypto = require("crypto")
 const algorithm = 'aes-256-cbc'; //Using AES encryption
 const encryptionKey = "EncryptionKey";
 const moment = require('moment')
+const multer = require('multer');
+const sizeOf = require('image-size');
+const path = require("path");
 
 const response = require('../utils/response')
 const middleware = require('../common/Utility')
@@ -33,6 +36,50 @@ const reportData = require('../models/report_data')
 const tokenHeaderKey = config.header.token;
 const langHeaderKey = config.header.lang_id;
 const secretKey = config.header.secret_key;
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './images');
+    },
+    filename: function (req, file, cb) {
+        cb(null, `${file.fieldname}_${Date.now()}${path.extname(file.originalname)}`)  
+
+    }
+})
+
+const uploadImg = multer({
+    storage: storage,
+    limits: {
+        fileSize: 2 * 1024 * 1024 // 2MB limit
+    },
+    fileFilter: async function (req, file, cb) {
+        try{
+            // Check file type (if needed)
+            // Check file size
+            if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+                return cb(new Error('Only JPG, JPEG, and PNG files are allowed!'))
+            }
+            if (file.size > 2 * 1024 * 1024) {
+                return cb(new Error('File size exceeds 2MB limit!'));
+            }
+
+            // Check aspect ratio (1:1)
+            // const dimensions = sizeOf(file.path);
+            // const width = dimensions.width;
+            // const height = dimensions.height;
+            // if (width !== height) {
+            //     return cb(new Error('Image must have a 1:1 aspect ratio!'));
+            // }
+
+            // Pass the validation
+            cb(null, true);
+        } catch (error) {
+            cb(error, true);
+            console.log("Error", error)
+        }
+        
+    },
+})
 
 // Encryption function
 function encrypt(text) {
@@ -1299,6 +1346,35 @@ const getDetails = async (req, res) => {
     }
 }
 
+const uploadAvatar = async (req, res) => {
+    try{
+        const lang_id = req.header(langHeaderKey);
+        const truck_id = req.body.truck_id;
+        const fileName = req.file.filename
+
+        if(!truck_id){
+            return response.sendBadRequestResponse(res, language.invalid_details[lang_id])
+        }
+        
+        // uploadSingle(req, res, async (err) => { // call as a normal function
+        //     if (err) return response.sendBadRequestResponse(res, err.message)
+        //     const file = req.file; 
+        //     console.log("File Name", fileName)
+        //     if (!file) {
+        //       return response.sendBadRequestResponse(res, "Please upload a file")
+        //     }
+        //   })
+        
+        const baseUrl = "http://127.0.0.1:8080/"
+        await truck.update({avatar_url: baseUrl+fileName}, { where: { truck_id: truck_id}})
+        return response.sendSuccessResponseMobile(res, [], "Image Uploaded Successfully")
+
+    } catch(err){
+        console.log(err)
+        return res.send(err)
+    }
+}
+
 module.exports = {
     signUp,
     login,
@@ -1329,7 +1405,9 @@ module.exports = {
     getTruckAvatar,
     updateAlertRadius,
     updateUTurn,
-    getDetails
+    getDetails,
+    uploadImg,
+    uploadAvatar
 }
 
 // try{

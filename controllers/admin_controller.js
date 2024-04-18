@@ -6,9 +6,12 @@ const report = require('../models/report');
 const contact = require('../models/contact');
 const reportData = require('../models/report_data');
 const contactData = require('../models/contact_data');
+const avatar = require('../models/avatar');
 
 const jwt = require('jsonwebtoken');
 const md5 = require("md5");
+const multer = require('multer');
+const path = require("path");
 
 const response = require('../utils/response')
 const config = require('../config/otherConfig.json')
@@ -18,6 +21,48 @@ const tokenHeaderKey = config.header.token;
 const langHeaderKey = config.header.lang_id;
 const secretKey = config.header.secret_key;
 
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './images');
+    },
+    filename: function (req, file, cb) {
+        cb(null, `${file.fieldname}_${Date.now()}${path.extname(file.originalname)}`)  
+
+    }
+})
+
+const uploadImg = multer({
+    storage: storage,
+    limits: {
+        fileSize: 2 * 1024 * 1024 // 2MB limit
+    },
+    fileFilter: async function (req, file, cb) {
+        try{
+            // Check file type (if needed)
+            // Check file size
+            if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+                return cb(new Error('Only JPG, JPEG, and PNG files are allowed!'))
+            }
+            if (file.size > 2 * 1024 * 1024) {
+                return cb(new Error('File size exceeds 2MB limit!'));
+            }
+
+            // Check aspect ratio (1:1)
+            // const dimensions = sizeOf(file.path);
+            // const width = dimensions.width;
+            // const height = dimensions.height;
+            // if (width !== height) {
+            //     return cb(new Error('Image must have a 1:1 aspect ratio!'));
+            // }
+
+            // Pass the validation
+            cb(null, true);
+        } catch (error) {
+            cb(error, true);
+        }
+        
+    },
+})
 
 const adminLogin = async (req, res) => {
     try {
@@ -487,6 +532,78 @@ const verifyTokenMsg = (token) => {
     }
 };
 
+const checkFile = (file, cb) => {
+    try {
+        if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+            return cb(new Error('Only JPG, JPEG, and PNG files are allowed!'));
+        }
+        if (file.size > 2 * 1024 * 1024) {
+            return cb(new Error('File size exceeds 2MB limit!'));
+        }
+
+        // Add more checks if needed
+        
+        cb(null, true); // Pass the validation if all checks pass
+    } catch (error) {
+        cb(error); // Pass any errors to the callback
+    }
+};
+
+const uploadAvatar = async (req, res) => {
+    try {
+        const lang_id = req.header(langHeaderKey)
+
+          uploadImg.fields([
+            { name: 'avatar', maxCount: 1, fileFilter: checkFile }, 
+            { name: 'thumbnail', maxCount: 1, fileFilter: checkFile } 
+        ])(req, res, async (err) => {
+            if (err) {
+                console.error(err);
+                return response.sendBadRequestResponse(res, err.message)
+            }
+
+            const avatarFile = req.files['avatar'] ? req.files['avatar'][0] : null;
+            const thumbnailFile = req.files['thumbnail'] ? req.files['thumbnail'][0] : null;
+
+            if (!avatarFile || !thumbnailFile) {
+                return response.sendBadRequestResponse(res, 'Please upload both avatar and thumbnail images.');
+            }
+
+            const avatarFileName = avatarFile.filename;
+            const thumbnailFileName = thumbnailFile.filename;
+
+            console.log("Avatar File Name", avatarFileName);
+            console.log("Thumbnail File Name", thumbnailFileName);
+            const baseUrl = "http://127.0.0.1:8080/"
+
+            await avatar.create({ image_url: baseUrl+avatarFileName, thumbnail: baseUrl+thumbnailFileName });
+            
+            // Send success response
+            return response.sendSuccessResponseMobile(res, [], "Images Uploaded Successfully");
+        });
+        
+        // return response.sendSuccessResponseMobile(res, [{ token: tokenHeader, id: id, role_id: 1 }], language.success[lang_id])
+    } catch (err) {
+        console.log(err)
+        return res.send(err)
+    }
+}
+
+const getAvatarList = async (req, res) => {
+    try{
+        const lang_id = req.header(langHeaderKey)
+
+        let result = await avatar.findAll({
+            attributes: ["avatar_id", "image_url", "thumbnail"],
+        });
+
+        return response.sendSuccessResponseMobile(res, result, language.success[lang_id]);
+    } catch (err) {
+        console.log(err)
+        return res.send(err)
+    }
+}
+
 module.exports = {
     adminLogin,
     deactivateTruck,
@@ -500,5 +617,7 @@ module.exports = {
     contactContent,
     getReportDetails,
     getContactDetails,
-    refreshToken
+    refreshToken,
+    uploadAvatar,
+    getAvatarList
 }

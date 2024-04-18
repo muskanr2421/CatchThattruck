@@ -47,7 +47,7 @@ app.use(express.json());
 app.use(express.static('public'));
 app.use(express.static('images'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ limit: '3mb', extended: true }));
 app.use(cors("*"));
 
 app.get('/', async (req, res) => {

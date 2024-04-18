@@ -25,5 +25,7 @@ router.get('/getQueryContent', admin.verifyToken, admin.contactContent)
 router.get('/getReportDetails', admin.verifyToken, admin.getReportDetails)
 router.get('/getQueryDetails', admin.verifyToken, admin.getContactDetails)
 router.post('/getRefreshToken', admin.refreshToken)
+router.post('/uploadAvatar', admin.verifyToken, admin.uploadAvatar)
+router.get('/getAvatarImages', admin.verifyToken, admin.getAvatarList)
 
 module.exports = router;

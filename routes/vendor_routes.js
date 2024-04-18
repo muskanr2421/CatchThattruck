@@ -3,6 +3,7 @@ const vendor = require('../controllers/vendor_controller');
 const express = require('express');
 const router = express.Router();
 
+const response = require('../utils/response')
 const validator = require('../middlewares/validators/userValidator');
 
 // Authentication Routes
@@ -37,5 +38,14 @@ router.get('/getTruckAvatar', vendor.verifyToken, vendor.getTruckAvatar)
 router.post('/updateAlertRadius', vendor.verifyToken, vendor.updateAlertRadius)
 router.post('/updateUTurn', vendor.verifyToken, vendor.updateUTurn)
 router.post('/getDetails', vendor.verifyToken, vendor.getDetails)
+router.post('/uploadAvatar', vendor.verifyToken, function(req, res, next) {
+    vendor.uploadImg.single('avatar')(req, res, function(err) {
+        if (err) {
+            console.error(err);
+            return response.sendBadRequestResponse(res, err.message);
+        }
+        next();
+    });
+}, vendor.uploadAvatar)
 
 module.exports = router;
