@@ -26,7 +26,8 @@ const truck = sequelize.define("truck", {
         type: DataTypes.STRING
     },
     avatar_id: {
-        type: DataTypes.INTEGER
+        type: DataTypes.INTEGER,
+        defaultValue : 1
     },
     lat: {
         type: DataTypes.STRING

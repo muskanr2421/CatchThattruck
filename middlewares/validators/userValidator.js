@@ -104,7 +104,7 @@ async function truckValidation(req, res, next) {
         truck_name: 'required|string',
         username: 'required|string',
         password: 'required|string',
-        avatar_id: 'required',
+        // avatar_id: 'required',
     });
 
     validator.check().then(function (matched) {

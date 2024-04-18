@@ -574,7 +574,7 @@ const uploadAvatar = async (req, res) => {
 
             console.log("Avatar File Name", avatarFileName);
             console.log("Thumbnail File Name", thumbnailFileName);
-            const baseUrl = "http://127.0.0.1:8080/"
+            const baseUrl = "https://catchthattruck.onrender.com/"
 
             await avatar.create({ image_url: baseUrl+avatarFileName, thumbnail: baseUrl+thumbnailFileName });
             
@@ -604,6 +604,26 @@ const getAvatarList = async (req, res) => {
     }
 }
 
+const getImageStatusList = async (req, res) => {
+    try {
+        const lang_id = req.header(langHeaderKey)
+
+        let result = await truck.findAll({
+            attributes: ["truck_id", "truck_name", "username", "avatar_approved", "avatar_url"],
+            where: {
+                avatar_approved: {
+                    [Sequelize.Op.not]: 0
+                }
+            }
+        })
+
+        return response.sendSuccessResponseMobile(res, result, language.success[lang_id])
+    } catch (err) {
+        console.log(err)
+        return res.send(err)
+    }
+}
+
 module.exports = {
     adminLogin,
     deactivateTruck,
@@ -619,5 +639,6 @@ module.exports = {
     getContactDetails,
     refreshToken,
     uploadAvatar,
-    getAvatarList
+    getAvatarList,
+    getImageStatusList
 }

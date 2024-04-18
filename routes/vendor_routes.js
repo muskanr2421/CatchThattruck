@@ -21,7 +21,15 @@ router.get('/auth/locationInfoAPI', vendor.getUpdatedCity);
 router.post('/editDetails', vendor.verifyToken, validator.editDetailsValidation, vendor.editDetails);
 router.get('/verify', vendor.verifyEmail);
 router.post('/changePassword', vendor.verifyToken, vendor.changePassword);
-router.post('/addTruck', vendor.verifyToken, validator.truckValidation, vendor.addTruck);
+router.post('/addTruck', vendor.verifyToken, function(req, res, next) {
+    vendor.uploadImg.single('avatar')(req, res, function(err) {
+        if (err) {
+            console.error(err);
+            return response.sendBadRequestResponse(res, err.message);
+        }
+        next();
+    });
+}, validator.truckValidation, vendor.addTruck);
 router.post('/editTruckDetails', vendor.verifyToken, validator.truckValidation, vendor.editTruck)
 router.post('/deleteTruck', vendor.verifyToken, vendor.deleteTruck)
 router.get('/getVendorTruck', vendor.verifyToken, vendor.getVendorTruck)

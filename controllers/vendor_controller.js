@@ -25,6 +25,8 @@ const multer = require('multer');
 const sizeOf = require('image-size');
 const path = require("path");
 
+const baseUrl = "https://catchthattruck.onrender.com/"
+
 const response = require('../utils/response')
 const middleware = require('../common/Utility')
 const config = require('../config/otherConfig.json')
@@ -831,13 +833,17 @@ const addTruck = async (req, res) => {
         const lang_id = req.header(langHeaderKey);
         const data = req.body;
         const vendor_id = req.user.vendor_id;
+        const fileName = req.file.filename;
+
         const info = {
             vendor_id: vendor_id,
             truck_name: data.truck_name,
             username: data.username,
             password: encrypt(data.password),
             is_primary: false,
-            avatar_id: data.avatar_id
+            avatar_id: data.avatar_id,
+            avatar_url: baseUrl+fileName, 
+            avatar_approved: 1
         }
 
         let vendorExists = await vendor.findOne({
@@ -1365,8 +1371,7 @@ const uploadAvatar = async (req, res) => {
         //     }
         //   })
         
-        const baseUrl = "http://127.0.0.1:8080/"
-        await truck.update({avatar_url: baseUrl+fileName}, { where: { truck_id: truck_id}})
+        await truck.update({ avatar_url: baseUrl+fileName, avatar_approved: 1 }, { where: { truck_id: truck_id}})
         return response.sendSuccessResponseMobile(res, [], "Image Uploaded Successfully")
 
     } catch(err){

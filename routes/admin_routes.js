@@ -27,5 +27,6 @@ router.get('/getQueryDetails', admin.verifyToken, admin.getContactDetails)
 router.post('/getRefreshToken', admin.refreshToken)
 router.post('/uploadAvatar', admin.verifyToken, admin.uploadAvatar)
 router.get('/getAvatarImages', admin.verifyToken, admin.getAvatarList)
+router.get('/getImageStatusList', admin.verifyToken, admin.getImageStatusList)
 
 module.exports = router;
