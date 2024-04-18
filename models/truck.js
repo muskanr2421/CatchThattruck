@@ -90,6 +90,9 @@ const truck = sequelize.define("truck", {
     },
     avatar_url: {
         type: DataTypes.STRING
+    },
+    reject_reason: {
+        type: DataTypes.STRING
     }
 },
 {

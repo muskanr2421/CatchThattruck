@@ -609,13 +609,35 @@ const getImageStatusList = async (req, res) => {
         const lang_id = req.header(langHeaderKey)
 
         let result = await truck.findAll({
-            attributes: ["truck_id", "truck_name", "username", "avatar_approved", "avatar_url"],
+            attributes: ["truck_id", "truck_name", "username", "avatar_approved", "avatar_url", "createdAt"],
             where: {
                 avatar_approved: {
                     [Sequelize.Op.not]: 0
                 }
             }
         })
+
+        return response.sendSuccessResponseMobile(res, result, language.success[lang_id])
+    } catch (err) {
+        console.log(err)
+        return res.send(err)
+    }
+}
+
+const updateImageStatus = async (req, res) => {
+    try {
+        const lang_id = req.header(langHeaderKey)
+        const { status, truck_id, reason } = req.body;
+
+        if(!truck_id || !status){
+            return response.sendBadRequestResponse(res, language.invalid_details[lang_id])
+        }
+
+        if(status == 2){
+            await truck.update({ avatar_approved: 2, reject_reason: "" } , { where: { truck_id: truck_id }})
+        } else{
+            await truck.update({ avatar_approved: 3, reject_reason: reason } , { where: { truck_id: truck_id }})
+        }
 
         return response.sendSuccessResponseMobile(res, result, language.success[lang_id])
     } catch (err) {
@@ -640,5 +662,6 @@ module.exports = {
     refreshToken,
     uploadAvatar,
     getAvatarList,
-    getImageStatusList
+    getImageStatusList,
+    updateImageStatus
 }

@@ -833,17 +833,28 @@ const addTruck = async (req, res) => {
         const lang_id = req.header(langHeaderKey);
         const data = req.body;
         const vendor_id = req.user.vendor_id;
-        const fileName = req.file.filename;
-
-        const info = {
-            vendor_id: vendor_id,
-            truck_name: data.truck_name,
-            username: data.username,
-            password: encrypt(data.password),
-            is_primary: false,
-            avatar_id: data.avatar_id,
-            avatar_url: baseUrl+fileName, 
-            avatar_approved: 1
+        
+        let info;
+        if(req.file && req.file.filename){
+            const fileName = req.file.filename;
+            info = {
+                vendor_id: vendor_id,
+                truck_name: data.truck_name,
+                username: data.username,
+                password: encrypt(data.password),
+                is_primary: false,
+                avatar_url: baseUrl+fileName, 
+                avatar_approved: 1
+            } 
+        } else{
+            info = {
+                vendor_id: vendor_id,
+                truck_name: data.truck_name,
+                username: data.username,
+                password: encrypt(data.password),
+                is_primary: false,
+                avatar_id: data.avatar_id
+            }
         }
 
         let vendorExists = await vendor.findOne({
