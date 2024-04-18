@@ -85,8 +85,8 @@ const truck = sequelize.define("truck", {
         defaultValue : "0"
     },
     avatar_approved: {
-        type: DataTypes.BOOLEAN,
-        defaultValue : false 
+        type: DataTypes.INTEGER,
+        defaultValue : 0 
     },
     avatar_url: {
         type: DataTypes.STRING

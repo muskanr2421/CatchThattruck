@@ -109,7 +109,7 @@ const getUserTrucks = async (req, res) => {
         const userLong = "75.9066966526162";
         const radius = 20; // 20km radius
 
-        const query = `SELECT truck_id, truck_name, username, lat, \`long\` FROM truck HAVING ${radius} >= (6371 * ACOS(COS(RADIANS(:userLat)) * COS(RADIANS(lat)) * COS(RADIANS(\`long\`) - RADIANS(:userLong)) + SIN(RADIANS(:userLat)) * SIN(RADIANS(lat))))`;
+        const query = `SELECT truck_id, truck_name, username, lat, \`long\`, avatar_id, avatar_approved FROM truck HAVING ${radius} >= (6371 * ACOS(COS(RADIANS(:userLat)) * COS(RADIANS(lat)) * COS(RADIANS(\`long\`) - RADIANS(:userLong)) + SIN(RADIANS(:userLat)) * SIN(RADIANS(lat))))`;
         sequelize.query(query, {
             replacements: { userLat, userLong },
             type: sequelize.QueryTypes.SELECT,
@@ -158,8 +158,13 @@ const getUserTrucks = async (req, res) => {
                         truck.report_id = 0;
                     }
 
+                    if(truck.avatar_approved){
+                        truck.image_url = truck.avatar_url;
+                    } else{
+                        truck.image_url = avatarData.image_url;
+                    }
                     truck.thumbnail = avatarData.thumbnail
-                    truck.image_url = avatarData.image_url
+                    // truck.image_url = avatarData.image_url
                 }
 
                 res.send(trucks)
@@ -236,7 +241,7 @@ const getFavouriteTruckList = async (req, res) => {
         const radius = 20; // 20km radius
         var truckIDs;
 
-        const query = `SELECT truck_id, truck_name, username, lat, \`long\`, avatar_id, vendor_id FROM truck HAVING ${radius} >= (6371 * ACOS(COS(RADIANS(:userLat)) * COS(RADIANS(lat)) * COS(RADIANS(\`long\`) - RADIANS(:userLong)) + SIN(RADIANS(:userLat)) * SIN(RADIANS(lat))))`;
+        const query = `SELECT truck_id, truck_name, username, lat, \`long\`, avatar_id, vendor_id, avatar_approved, avatar_url FROM truck HAVING ${radius} >= (6371 * ACOS(COS(RADIANS(:userLat)) * COS(RADIANS(lat)) * COS(RADIANS(\`long\`) - RADIANS(:userLong)) + SIN(RADIANS(:userLat)) * SIN(RADIANS(lat))))`;
         sequelize.query(query, {
             replacements: { userLat, userLong },
             type: sequelize.QueryTypes.SELECT,
@@ -307,6 +312,13 @@ const getFavouriteTruckList = async (req, res) => {
                 }
             }
 
+            var imageUrl;
+            if(truck.avatar_approved){
+                imageUrl = truck.avatar_url;
+            } else{
+                imageUrl = avatarData.image_url;
+            }
+
             return {
                 truck_id: truck.truck_id,
                 truck_name: truck.truck_name,
@@ -317,7 +329,7 @@ const getFavouriteTruckList = async (req, res) => {
                 user_rating: userRating ? userRating.star_count : 0,
                 report_id: reportData ? reportData.msg_id : 0,
                 thumbnail: avatarData.thumbnail,
-                image_url: avatarData.image_url,
+                image_url: imageUrl,
                 ringtone_id: truckRingtoneData ? truckRingtoneData.ringtone_id : userData.ringtone_id,
                 ringtone_name: truckRing[lang_id],
                 notifi: item.notifi,
@@ -785,8 +797,12 @@ const getEventTruckList = async (req, res) => {
             }
             data.ringtone_name = truckRing[lang_id];
 
-            data.thumbnail = avatarData.thumbnail;
-            data.image_url = avatarData.image_url;
+            var imageUrl;
+            if(truck.avatar_approved){
+                imageUrl = truck.avatar_url;
+            } else{
+                imageUrl = avatarData.image_url;
+            }
 
             return {
                 truck_id: data.truck_id,
@@ -797,7 +813,7 @@ const getEventTruckList = async (req, res) => {
                 avatar_id: data.avatar_id,
                 average_rating: parseFloat(averageRating.toFixed(2)),
                 thumbnail: avatarData.thumbnail,
-                image_url: avatarData.image_url,
+                image_url: imageUrl,
                 ringtone_name: truckRing[lang_id],
             };
 

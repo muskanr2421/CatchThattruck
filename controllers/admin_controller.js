@@ -629,7 +629,7 @@ const updateImageStatus = async (req, res) => {
         const lang_id = req.header(langHeaderKey)
         const { status, truck_id, reason } = req.body;
 
-        if(!truck_id || !status){
+        if(!truck_id || !status || !reason){
             return response.sendBadRequestResponse(res, language.invalid_details[lang_id])
         }
 

@@ -466,7 +466,7 @@ async function getUserTrucks(lat, long, id, isCompass, socket) {
 
   const radius = 20; // 20km radius
 
-  const query = `SELECT truck_id, truck_name, username, lat, \`long\`, avatar_id, vendor_id FROM truck HAVING ${radius} >= (6371 * ACOS(COS(RADIANS(:userLat)) * COS(RADIANS(lat)) * COS(RADIANS(\`long\`) - RADIANS(:userLong)) + SIN(RADIANS(:userLat)) * SIN(RADIANS(lat))))`;
+  const query = `SELECT truck_id, truck_name, username, lat, \`long\`, avatar_id, vendor_id, avatar_approved, avatar_url FROM truck HAVING ${radius} >= (6371 * ACOS(COS(RADIANS(:userLat)) * COS(RADIANS(lat)) * COS(RADIANS(\`long\`) - RADIANS(:userLong)) + SIN(RADIANS(:userLat)) * SIN(RADIANS(lat))))`;
   sequelize.query(query, {
     replacements: { userLat, userLong },
     type: sequelize.QueryTypes.SELECT,
@@ -529,8 +529,12 @@ async function getUserTrucks(lat, long, id, isCompass, socket) {
           truck.report_id = 0;
         }
 
+        if(truck.avatar_approved){
+          truck.image_url = truck.avatar_url;
+        } else{
+          truck.image_url = avatarData.image_url;
+        }
         truck.thumbnail = avatarData.thumbnail;
-        truck.image_url = avatarData.image_url;
       }
 
       return socket.emit('APIResponse', JSON.stringify({

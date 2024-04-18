@@ -833,7 +833,7 @@ const addTruck = async (req, res) => {
         const lang_id = req.header(langHeaderKey);
         const data = req.body;
         const vendor_id = req.user.vendor_id;
-        
+
         let info;
         if(req.file && req.file.filename){
             const fileName = req.file.filename;
@@ -979,7 +979,7 @@ const getVendorTruck = async (req, res) => {
         // console.log("encrypt", decryptedText)
 
         var result = await truck.findAll({
-            attributes: ["truck_id", "truck_name", "username", "avatar_id", "is_primary", "password"],
+            attributes: ["truck_id", "truck_name", "username", "avatar_id", "is_primary", "password", "avatar_approved", "avatar_url", "reject_reason"],
             where: {
                 vendor_id: vendor_id
             },
@@ -1000,8 +1000,12 @@ const getVendorTruck = async (req, res) => {
                 where: { avatar_id: result[i].avatar_id }
             })
             result[i].password = decrypt(result[i].password);
+            if(result[i].avatar_approved){
+                result[i].dataValues.image_url = result[i].avatar_url;
+            } else{
+                result[i].dataValues.image_url = avatarResult.image_url;
+            }
             result[i].dataValues.thumbnail = avatarResult.thumbnail;
-            result[i].dataValues.image_url = avatarResult.image_url;
         }
 
         if (!result) {
