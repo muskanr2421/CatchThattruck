@@ -193,7 +193,7 @@ const signUp = async(req,res) => {
             algorithm: config.common.algo
         })
 
-        const link = `https://clean-penguin-constantly.ngrok-free.app/api/dev/vendor/verify?token=${token}`
+        const link = `https://catchthattruck.onrender.com/api/dev/vendor/verify?token=${token}`
 
         middleware.mailSender(req.body.email, language.verify_email[lang_id], `${language.email_link[lang_id]} ${link}`)
             .then((data) => {
@@ -853,7 +853,8 @@ const addTruck = async (req, res) => {
                 username: data.username,
                 password: encrypt(data.password),
                 is_primary: false,
-                avatar_id: data.avatar_id
+                avatar_id: data.avatar_id,
+                avatar_approved: 0
             }
         }
 
@@ -995,24 +996,52 @@ const getVendorTruck = async (req, res) => {
         // console.log("Password----->", result)
         // console.log("Password----->", result.password)
         // console.log("Password----->", decrypt(result.password))
-        for(i in result){
+        // for(i in result){
+        //     let avatarResult = await avatar.findOne({
+        //         where: { avatar_id: result[i].avatar_id }
+        //     })
+        //     result[i].password = decrypt(result[i].password);
+        //     if(result[i].avatar_approved == 2){
+        //         result[i].dataValues.image_url = result[i].avatar_url;
+        //     } else{
+        //         result[i].dataValues.image_url = avatarResult.image_url;
+        //     }
+        //     result[i].dataValues.thumbnail = avatarResult.thumbnail;
+        //     delete result[i].avatar_url;
+        // }
+
+        const formattedData = await Promise.all(result.map(async (item) => {
+            const truck = item;
             let avatarResult = await avatar.findOne({
-                where: { avatar_id: result[i].avatar_id }
+                where: { avatar_id: truck.avatar_id }
             })
-            result[i].password = decrypt(result[i].password);
-            if(result[i].avatar_approved){
-                result[i].dataValues.image_url = result[i].avatar_url;
+            let imageUrl;
+            if(truck.avatar_approved == 2){
+                imageUrl = truck.avatar_url;
             } else{
-                result[i].dataValues.image_url = avatarResult.image_url;
+                imageUrl = avatarResult.image_url;
             }
-            result[i].dataValues.thumbnail = avatarResult.thumbnail;
-        }
+
+            return {
+                truck_id: truck.truck_id,
+                truck_name: truck.truck_name,
+                username: truck.username,
+                avatar_id: truck.avatar_id,
+                is_primary: truck.is_primary,
+                password: decrypt(truck.password),
+                thumbnail: avatarResult.thumbnail,
+                image_url: imageUrl,
+                avatar_approved: truck.avatar_approved,
+                reject_reason: truck.reject_reason
+            };
+
+        }));
 
         if (!result) {
             return response.sendBadRequestResponse(res, language.no_truck[lang_id]);
         }
 
-        return response.sendSuccessResponseMobile(res, result, language.trucks_fetched[lang_id])
+        return response.sendSuccessResponseMobile(res, formattedData, language.trucks_fetched[lang_id])
 
     } catch(err){
         console.log(err)
@@ -1387,7 +1416,58 @@ const uploadAvatar = async (req, res) => {
         //   })
         
         await truck.update({ avatar_url: baseUrl+fileName, avatar_approved: 1 }, { where: { truck_id: truck_id}})
-        return response.sendSuccessResponseMobile(res, [], "Image Uploaded Successfully")
+        return response.sendSuccessResponseMobile(res, [], language.image_uploaded[lang_id])
+
+    } catch(err){
+        console.log(err)
+        return res.send(err)
+    }
+}
+
+const editTruckUpdated = async (req, res) => {
+    try{
+        const lang_id = req.header(langHeaderKey);
+        const data = req.body;
+        const vendor_id = req.user.vendor_id;
+        
+        let info;
+        if(req.file && req.file.filename){
+            const fileName = req.file.filename;
+            info = {
+                truck_name: data.truck_name,
+                username: data.username,
+                password: encrypt(data.password),
+                avatar_url: baseUrl+fileName, 
+                avatar_approved: 1
+            }
+        } else{
+            info = {
+                truck_name: data.truck_name,
+                username: data.username,
+                password: encrypt(data.password),
+                avatar_id: data.avatar_id,
+                avatar_approved: 0
+            }
+        }
+        
+        const result = await truck.findOne({
+            where: {
+                username: data.username, 
+                vendor_id: vendor_id
+            }
+        });
+
+        if (!result) {
+            return response.sendBadRequestResponse(res, language.no_truck[lang_id]);
+        }
+
+        await truck.update(info, {
+            where: {
+                username: data.username, 
+                vendor_id: vendor_id
+            }
+        });
+        return response.sendSuccessResponseMobile(res, [], language.truck_details[lang_id])
 
     } catch(err){
         console.log(err)
@@ -1427,7 +1507,8 @@ module.exports = {
     updateUTurn,
     getDetails,
     uploadImg,
-    uploadAvatar
+    uploadAvatar,
+    editTruckUpdated
 }
 
 // try{

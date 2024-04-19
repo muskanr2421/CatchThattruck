@@ -248,8 +248,8 @@
         "es": "Ubicación actualizada exitosamente"
     },
     "welcome": {
-        "en": "We’re revolutionizing the Ice Cream Truck industry and we are so happy you decided to join us.\nWith this app, your customers get advanced notice as you approach their location. We play a jingle on their phone.\nFinally, you can reach customers sitting inside playing video games or wearing earbuds who want ice cream but have no idea you just drove by.\nWe did the hard part. All you have to do is share. Tell all of your customers about the app and have them add you to their favorite trucks.\nYou can unlock any neighborhood with this app.\nCustomer service is the key.\nWe do require you to have listed prices, give change, and conduct yourself professionally.\nYou may upload a custom avatar to show your location on a map. Until you do, we’ll use a generic default icon. To upload a custom avatar icon, please go to “Update Account” in Account Settings.",
-        "es": "Estamos revolucionando la industria de los camiones de helados y estamos muy contentos de que hayas decidido unirte a nosotros.\nCon esta aplicación, tus clientes reciben un aviso avanzado cuando te acercas a su ubicación. Reproducimos una melodía en su teléfono.\nFinalmente, puedes llegar a clientes que están sentados adentro jugando videojuegos o usando auriculares y que quieren helado pero no tienen idea de que acabas de pasar.\nNosotros hicimos la parte difícil. Todo lo que tienes que hacer es compartir. Cuéntales a todos tus clientes sobre la aplicación y pídeles que te agreguen a sus camiones favoritos.\nPuedes desbloquear cualquier vecindario con esta aplicación.\nEl servicio al cliente es la clave.\nTe pedimos que tengas precios listados, des cambio y te comportes de manera profesional.\nPuedes subir un avatar personalizado para mostrar tu ubicación en un mapa. Hasta que lo hagas, usaremos un icono predeterminado genérico. Para cargar un avatar personalizado, ve a “Actualizar cuenta” en Configuración de la cuenta."
+        "en": "We’re revolutionizing the Ice Cream Truck industry and we are so happy you decided to join us.\n\nWith this app, your customers get advanced notice as you approach their location. We play a jingle on their phone.\n\nFinally, you can reach customers sitting inside playing video games or wearing earbuds who want ice cream but have no idea you just drove by.\n\nWe did the hard part. All you have to do is share. Tell all of your customers about the app and have them add you to their favorite trucks.\n\nYou can unlock any neighborhood with this app.\n\nCustomer service is the key.\n\nWe do require you to have listed prices, give change, and conduct yourself professionally.\n\nYou may upload a custom avatar to show your location on a map. Until you do, we’ll use a generic default icon. To upload a custom avatar icon, please go to “Update Account” in Account Settings.",
+        "es": "Estamos revolucionando la industria de los camiones de helados y estamos muy contentos de que hayas decidido unirte a nosotros.\n\nCon esta aplicación, tus clientes reciben un aviso avanzado cuando te acercas a su ubicación. Reproducimos una melodía en su teléfono.\n\nFinalmente, puedes llegar a clientes que están sentados adentro jugando videojuegos o usando auriculares y que quieren helado pero no tienen idea de que acabas de pasar.\n\nNosotros hicimos la parte difícil. Todo lo que tienes que hacer es compartir. Cuéntales a todos tus clientes sobre la aplicación y pídeles que te agreguen a sus camiones favoritos.\nPuedes desbloquear cualquier vecindario con esta aplicación.\n\nEl servicio al cliente es la clave.\n\nTe pedimos que tengas precios listados, des cambio y te comportes de manera profesional.\n\nPuedes subir un avatar personalizado para mostrar tu ubicación en un mapa. Hasta que lo hagas, usaremos un icono predeterminado genérico. Para cargar un avatar personalizado, ve a “Actualizar cuenta” en Configuración de la cuenta."
     },
     "private_event": {
         "en": "Customers can request information about private events.\nOnly trucks added to their favorites will receive these requests.\n\nPart of your profile viewable by the customer will show your minimum dollar amount to provide services to a private event.\n\nYou may opt out of these requests.",
@@ -326,5 +326,21 @@
     "primary_truck_delete": {
         "en": "Primary Truck can not be deleted.",
         "es": "El camión principal no se puede eliminar."
+    },
+    "image_uploaded": {
+        "en": "Image Uploaded Successfully",
+        "es": "Imagen cargada exitosamente"
+    }, 
+    "only_image": {
+        "en": "Only JPG, JPEG, and PNG files are allowed!",
+        "es": "¡Solo se permiten archivos JPG, JPEG y PNG!"
+    },
+    "file_size": {
+        "en": "File size exceeds 2MB limit!",
+        "es": "¡El tamaño del archivo excede el límite de 2 MB!"
+    },
+    "upload_both_images": {
+        "en": "Please upload both avatar and thumbnail images.",
+        "es": "Cargue imágenes de avatar y miniaturas."
     }
 }

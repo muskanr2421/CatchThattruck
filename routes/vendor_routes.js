@@ -30,7 +30,16 @@ router.post('/addTruck', vendor.verifyToken, function(req, res, next) {
         next();
     });
 }, validator.truckValidation, vendor.addTruck);
-router.post('/editTruckDetails', vendor.verifyToken, validator.truckValidation, vendor.editTruck)
+router.post('/editTruckDetails', vendor.verifyToken,  validator.truckValidation, vendor.editTruck)
+router.post('/editTruckDetailsUpdated', vendor.verifyToken, function(req, res, next) {
+    vendor.uploadImg.single('avatar')(req, res, function(err) {
+        if (err) {
+            console.error(err);
+            return response.sendBadRequestResponse(res, err.message);
+        }
+        next();
+    });
+}, validator.truckValidation, vendor.editTruckUpdated)
 router.post('/deleteTruck', vendor.verifyToken, vendor.deleteTruck)
 router.get('/getVendorTruck', vendor.verifyToken, vendor.getVendorTruck)
 router.get('/getContent', vendor.verifyToken, vendor.getTranslations)

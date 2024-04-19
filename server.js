@@ -529,7 +529,7 @@ async function getUserTrucks(lat, long, id, isCompass, socket) {
           truck.report_id = 0;
         }
 
-        if(truck.avatar_approved){
+        if(truck.avatar_approved == 2){
           truck.image_url = truck.avatar_url;
         } else{
           truck.image_url = avatarData.image_url;

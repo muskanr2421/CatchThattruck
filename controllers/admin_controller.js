@@ -566,7 +566,7 @@ const uploadAvatar = async (req, res) => {
             const thumbnailFile = req.files['thumbnail'] ? req.files['thumbnail'][0] : null;
 
             if (!avatarFile || !thumbnailFile) {
-                return response.sendBadRequestResponse(res, 'Please upload both avatar and thumbnail images.');
+                return response.sendBadRequestResponse(res, language.upload_both_images[lang_id]);
             }
 
             const avatarFileName = avatarFile.filename;
@@ -579,7 +579,7 @@ const uploadAvatar = async (req, res) => {
             await avatar.create({ image_url: baseUrl+avatarFileName, thumbnail: baseUrl+thumbnailFileName });
             
             // Send success response
-            return response.sendSuccessResponseMobile(res, [], "Images Uploaded Successfully");
+            return response.sendSuccessResponseMobile(res, [], language.image_uploaded[lang_id]);
         });
         
         // return response.sendSuccessResponseMobile(res, [{ token: tokenHeader, id: id, role_id: 1 }], language.success[lang_id])
@@ -629,7 +629,7 @@ const updateImageStatus = async (req, res) => {
         const lang_id = req.header(langHeaderKey)
         const { status, truck_id, reason } = req.body;
 
-        if(!truck_id || !status || !reason){
+        if(!truck_id || !status){
             return response.sendBadRequestResponse(res, language.invalid_details[lang_id])
         }
 
@@ -639,7 +639,7 @@ const updateImageStatus = async (req, res) => {
             await truck.update({ avatar_approved: 3, reject_reason: reason } , { where: { truck_id: truck_id }})
         }
 
-        return response.sendSuccessResponseMobile(res, result, language.success[lang_id])
+        return response.sendSuccessResponseMobile(res, [], language.success[lang_id])
     } catch (err) {
         console.log(err)
         return res.send(err)

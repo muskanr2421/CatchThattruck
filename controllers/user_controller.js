@@ -109,7 +109,7 @@ const getUserTrucks = async (req, res) => {
         const userLong = "75.9066966526162";
         const radius = 20; // 20km radius
 
-        const query = `SELECT truck_id, truck_name, username, lat, \`long\`, avatar_id, avatar_approved FROM truck HAVING ${radius} >= (6371 * ACOS(COS(RADIANS(:userLat)) * COS(RADIANS(lat)) * COS(RADIANS(\`long\`) - RADIANS(:userLong)) + SIN(RADIANS(:userLat)) * SIN(RADIANS(lat))))`;
+        const query = `SELECT truck_id, truck_name, username, lat, \`long\`, avatar_id, avatar_approved, avatar_url FROM truck HAVING ${radius} >= (6371 * ACOS(COS(RADIANS(:userLat)) * COS(RADIANS(lat)) * COS(RADIANS(\`long\`) - RADIANS(:userLong)) + SIN(RADIANS(:userLat)) * SIN(RADIANS(lat))))`;
         sequelize.query(query, {
             replacements: { userLat, userLong },
             type: sequelize.QueryTypes.SELECT,
@@ -158,7 +158,7 @@ const getUserTrucks = async (req, res) => {
                         truck.report_id = 0;
                     }
 
-                    if(truck.avatar_approved){
+                    if(truck.avatar_approved == 2){
                         truck.image_url = truck.avatar_url;
                     } else{
                         truck.image_url = avatarData.image_url;
@@ -313,7 +313,7 @@ const getFavouriteTruckList = async (req, res) => {
             }
 
             var imageUrl;
-            if(truck.avatar_approved){
+            if(truck.avatar_approved == 2){
                 imageUrl = truck.avatar_url;
             } else{
                 imageUrl = avatarData.image_url;
@@ -798,7 +798,7 @@ const getEventTruckList = async (req, res) => {
             data.ringtone_name = truckRing[lang_id];
 
             var imageUrl;
-            if(truck.avatar_approved){
+            if(truck.avatar_approved == 2){
                 imageUrl = truck.avatar_url;
             } else{
                 imageUrl = avatarData.image_url;
