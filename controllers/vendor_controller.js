@@ -1022,11 +1022,18 @@ const getVendorTruck = async (req, res) => {
                 imageUrl = avatarResult.image_url;
             }
 
+            let avatarId;
+            if(truck.avatar_approved == 0){
+                avatarId = truck.avatar_id;
+            } else {
+                avatarId = "";
+            }
+
             return {
                 truck_id: truck.truck_id,
                 truck_name: truck.truck_name,
                 username: truck.username,
-                avatar_id: truck.avatar_id,
+                avatar_id: avatarId,
                 is_primary: truck.is_primary,
                 password: decrypt(truck.password),
                 thumbnail: avatarResult.thumbnail,
@@ -1441,12 +1448,22 @@ const editTruckUpdated = async (req, res) => {
                 avatar_approved: 1
             }
         } else{
-            info = {
-                truck_name: data.truck_name,
-                username: data.username,
-                password: encrypt(data.password),
-                avatar_id: data.avatar_id,
-                avatar_approved: 0
+            if(data.avatar_id){
+                console.log("here")
+                info = {
+                    truck_name: data.truck_name,
+                    username: data.username,
+                    password: encrypt(data.password),
+                    avatar_id: data.avatar_id,
+                    avatar_approved: 0
+                }  
+            } else {
+                console.log("Here")
+                info = {
+                    truck_name: data.truck_name,
+                    username: data.username,
+                    password: encrypt(data.password)
+                }  
             }
         }
         
