@@ -129,7 +129,7 @@ io.on('connection', async (socket) => {
                 // }, 15000);
                 const getData = async () => {
                   await getUserTrucks(data.lat, data.long, data.id, data.isCompass, socket);
-                  userTruckTimeout = setTimeout(getData, 15000);
+                  userTruckTimeout = setTimeout(getData, 30000);
                 };
 
                 getData();

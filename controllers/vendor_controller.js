@@ -25,7 +25,7 @@ const multer = require('multer');
 const sizeOf = require('image-size');
 const path = require("path");
 
-const baseUrl = "https://catchthattruck.onrender.com/"
+const baseUrl = "https://truly-thankful-marten.ngrok-free.app/"
 
 const response = require('../utils/response')
 const middleware = require('../common/Utility')
@@ -193,7 +193,7 @@ const signUp = async(req,res) => {
             algorithm: config.common.algo
         })
 
-        const link = `https://catchthattruck.onrender.com/api/dev/vendor/verify?token=${token}`
+        const link = `https://truly-thankful-marten.ngrok-free.app/api/dev/vendor/verify?token=${token}`
 
         middleware.mailSender(req.body.email, language.verify_email[lang_id], `${language.email_link[lang_id]} ${link}`)
             .then((data) => {

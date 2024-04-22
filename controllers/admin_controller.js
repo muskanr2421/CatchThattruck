@@ -84,7 +84,13 @@ const adminLogin = async (req, res) => {
         }
 
         if (result.password !== md5(data.password)) {
-            return response.sendBadRequestResponseAdmin(res, 400, language.wrong_credentials[lang_id])
+            return res.status(400).json({
+                status: false,
+                status_code: 400,
+                message: language.wrong_credentials[lang_id],
+                data:[]
+              });
+            // return response.sendBadRequestResponseAdmin(res, 400, language.wrong_credentials[lang_id])
         }
 
         const payload = {
@@ -574,7 +580,7 @@ const uploadAvatar = async (req, res) => {
 
             console.log("Avatar File Name", avatarFileName);
             console.log("Thumbnail File Name", thumbnailFileName);
-            const baseUrl = "https://catchthattruck.onrender.com/"
+            const baseUrl = "https://truly-thankful-marten.ngrok-free.app/"
 
             await avatar.create({ image_url: baseUrl+avatarFileName, thumbnail: baseUrl+thumbnailFileName });
             
