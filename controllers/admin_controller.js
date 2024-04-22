@@ -579,7 +579,8 @@ const uploadAvatar = async (req, res) => {
             const thumbnailFileName = thumbnailFile.filename;
 
             console.log("Avatar File Name", avatarFileName);
-            console.log("Thumhttps://catchthattruck.onrender.com/"
+            console.log("Thumbnail File Name", thumbnailFileName);
+            const baseUrl = "https://truly-thankful-marten.ngrok-free.app/"
 
             await avatar.create({ image_url: baseUrl+avatarFileName, thumbnail: baseUrl+thumbnailFileName });
             
