@@ -537,13 +537,13 @@ async function getUserTrucks(lat, long, id, isCompass, socket) {
         truck.thumbnail = avatarData.thumbnail;
       }
 
-      const filteredTrucks = trucks.filter(truck => trucksId.hasOwnProperty(truck.truck_id));
+      // const filteredTrucks = trucks.filter(truck => trucksId.hasOwnProperty(truck.truck_id));
 
       return socket.emit('APIResponse', JSON.stringify({
         success: true,
         status_code: 200,
         message: 'Trucks Fetched Successfully',
-        truck_data: filteredTrucks,
+        truck_data: trucks,
       }));
     })
     .catch(error => {
