@@ -29,7 +29,7 @@ const rate_truck = require("./models/rate_truck")
 const report_data = require("./models/report_data")
 const avatar = require('./models/avatar')
 
-// const app = express();
+const app = express();
 const server = require('http').Server(app);
 const io = require('socket.io')(server, {
   cors: {
@@ -428,8 +428,7 @@ async function getAllTrucks(socket) {
     // return emitError(socket);
   }
 }
-const dataname = ''
-dataname = 'Crash'
+
 async function getAllVendors(socket) {
   try {
     let data = await vendor.findAll({
