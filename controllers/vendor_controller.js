@@ -232,8 +232,7 @@ const login = async (req, res) => {
 
         if(result){
             if(result.password !== md5(data.password)){
-                // return response.sendBadRequestResponse(res, language.pass_incorrect[lang_id])
-                return res.status(400).send({message: "Error"})
+                return response.sendBadRequestResponse(res, language.pass_incorrect[lang_id])
             }
             if(!result.is_verified){
                 return response.sendBadRequestResponse(res, language.email_not_verified[lang_id])
@@ -291,14 +290,13 @@ const login = async (req, res) => {
             //     await User.destroy({where: {device_id: data.device_id}})
             // }
     
-            // return res.status(200).json({
-            //     message: language.success_login[lang_id],
-            //     status: true,
-            //     status_code: 200,
-            //     token: token,
-            //     data : [info]
-            // })
-            return res.status(500).send({message: "Error"})
+            return res.status(200).json({
+                message: language.success_login[lang_id],
+                status: true,
+                status_code: 200,
+                token: token,
+                data : [info]
+            })
         } else {
             if(truckExists.password !== encrypt(data.password)){
                 return response.sendBadRequestResponse(res, language.pass_incorrect[lang_id])
