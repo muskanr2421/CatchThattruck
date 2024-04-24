@@ -2,7 +2,8 @@ const cron = require('node-cron');
 const sequelize = require('./models/index');
 const User = require('./models/user')
 const middleware = require('./common/Utility')
-const { clearStopData } = require('./server')
+const clearStopData = require('./server')
+var trucks = [];
 
 //First and Second Alert Radius Notification to Use
 cron.schedule('*/15 * * * *', async function () {
@@ -101,18 +102,24 @@ cron.schedule('*/15 * * * *', async function () {
                 var truckIds = []
                 // console.log("Truck First", trucksFirst)
                 // console.log("Truck Second", trucksSecond)
-
+                
+                // console.log(trucks)
                 for (const truck of trucksSecond) {
-                    truckIds.push(truck.truck_id);
-                    middleware.CustomNotification("Truck Alert", `${truck.truck_name} is pretty close to you`, data.fcm_token)
+                    // if(!trucks.includes(truck.truck_id)){
+                        truckIds.push(truck.truck_id);
+                        // trucks.push(truck.truck_id);
+                        middleware.CustomNotification("Truck Alert", `${truck.truck_name} is pretty close to you`, data.fcm_token)
+                    // } 
                 }
 
                 for (const truck of trucksFirst) {
                     // console.log("Truckids--->", truckIds)
-                    if(!truckIds.includes(truck.truck_id)){
-                        // console.log("Entered")
-                        middleware.CustomNotification("Truck Alert", `${truck.truck_name} is in your neighbourhood`, data.fcm_token)
-                    }
+                    // if(!trucks.includes(truck.truck_id)){
+                        if(!truckIds.includes(truck.truck_id)){
+                            // console.log("Entered")
+                            middleware.CustomNotification("Truck Alert", `${truck.truck_name} is in your neighbourhood`, data.fcm_token)
+                        }
+                    // }
                 }
             }
         }
@@ -128,6 +135,7 @@ cron.schedule('*/15 * * * *', async function () {
 //Clear Stop Data at MidNight 12:00 AM
 cron.schedule('0 0 * * *', async () => {
     clearStopData()
+    trucks = [];
 }, {
     scheduled: true,
     timezone: 'America/Los_Angeles' // Set the timezone to Pacific Standard Time

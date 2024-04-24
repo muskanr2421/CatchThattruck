@@ -595,6 +595,27 @@ const uploadAvatar = async (req, res) => {
     }
 }
 
+const deleteAvatar = async (req, res) => {
+    try {
+        const lang_id = req.header(langHeaderKey)
+        const { avatar_id } = req.body;
+
+        let avatarExist = await avatar.findOne({ where: { avatar_id: avatar_id}})
+
+        if(!avatarExist){
+            return response.sendBadRequestResponse(res, "No Avatar Found")
+        }
+
+        await avatar.destroy({ where: { avatar_id: avatar_id}})
+
+        return response.sendSuccessResponseMobile(res, [], language.success[lang_id]);
+    
+    } catch (err) {
+        console.log(err)
+        return res.send(err)
+    }
+}
+
 const getAvatarList = async (req, res) => {
     try{
         const lang_id = req.header(langHeaderKey)
@@ -667,6 +688,7 @@ module.exports = {
     getContactDetails,
     refreshToken,
     uploadAvatar,
+    deleteAvatar,
     getAvatarList,
     getImageStatusList,
     updateImageStatus

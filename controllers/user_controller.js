@@ -305,9 +305,9 @@ const getFavouriteTruckList = async (req, res) => {
 
             let off_duty;
             if(truck.is_online){
-                off_duty = true;
+                off_duty =  false;
             } else{
-                off_duty = false;
+                off_duty = true;
             }
 
             // for (const truckID of truckIDs) {
