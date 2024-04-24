@@ -540,7 +540,7 @@ async function getUserTrucks(lat, long, id, isCompass, socket) {
         }
       }
 
-      var filteredTrucks;
+      var filteredTrucks = [];
       for(const key in trucksId){
         console.log("IDS", trucksId[key])
         //add trucks in filtered truck
