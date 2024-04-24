@@ -105,5 +105,5 @@ const truck = sequelize.define("truck", {
 
 favTruck.belongsTo(truck, {foreignKey : 'truck_id', targetKey: 'truck_id'});
 reportData.belongsTo(truck, {foreignKey : 'truck_id', targetKey: 'truck_id'});
-truck.sync({alter : true})
+truck.sync({alter : false})
 module.exports = truck

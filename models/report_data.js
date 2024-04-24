@@ -25,5 +25,5 @@ const reportData = sequelize.define("report_data", {
     freezeTableName: true
 })
 
-reportData.sync({alter : true})
+reportData.sync({alter : false})
 module.exports = reportData
