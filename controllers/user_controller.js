@@ -241,14 +241,14 @@ const getFavouriteTruckList = async (req, res) => {
         const radius = 20; // 20km radius
         var truckIDs;
 
-        const query = `SELECT truck_id, truck_name, username, lat, \`long\`, avatar_id, vendor_id, avatar_approved, avatar_url FROM truck HAVING ${radius} >= (6371 * ACOS(COS(RADIANS(:userLat)) * COS(RADIANS(lat)) * COS(RADIANS(\`long\`) - RADIANS(:userLong)) + SIN(RADIANS(:userLat)) * SIN(RADIANS(lat))))`;
-        sequelize.query(query, {
-            replacements: { userLat, userLong },
-            type: sequelize.QueryTypes.SELECT,
-        })
-            .then(async trucks => {
-                truckIDs = trucks.map(truck => truck.truck_id);
-            })
+        // const query = `SELECT truck_id, truck_name, username, lat, \`long\`, avatar_id, vendor_id, avatar_approved, avatar_url FROM truck HAVING ${radius} >= (6371 * ACOS(COS(RADIANS(:userLat)) * COS(RADIANS(lat)) * COS(RADIANS(\`long\`) - RADIANS(:userLong)) + SIN(RADIANS(:userLat)) * SIN(RADIANS(lat))))`;
+        // sequelize.query(query, {
+        //     replacements: { userLat, userLong },
+        //     type: sequelize.QueryTypes.SELECT,
+        // })
+        //     .then(async trucks => {
+        //         truckIDs = trucks.map(truck => truck.truck_id);
+        //     })
 
         let favTrucks = await favTruck.findAll({
             where: { user_id: user_id },
@@ -303,14 +303,19 @@ const getFavouriteTruckList = async (req, res) => {
             const distance = calculateDistance(truck.lat, truck.long, userLat, userLong);
             const in_proximity = distance <= 20;
 
-            let off_duty = true;
-
-            for (const truckID of truckIDs) {
-                if (truckID === truck.truck_id) {
-                    off_duty = false; // If a matching truck ID is found, the truck is not off duty
-                    break;
-                }
+            let off_duty;
+            if(truck.is_online){
+                off_duty = true;
+            } else{
+                off_duty = false;
             }
+
+            // for (const truckID of truckIDs) {
+            //     if (truckID === truck.truck_id) {
+            //         off_duty = false; // If a matching truck ID is found, the truck is not off duty
+            //         break;
+            //     }
+            // }
 
             var imageUrl;
             if(truck.avatar_approved == 2){

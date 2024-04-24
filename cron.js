@@ -2,7 +2,7 @@ const cron = require('node-cron');
 const sequelize = require('./models/index');
 const User = require('./models/user')
 const middleware = require('./common/Utility')
-const clearStopData = require('./server')
+const { clearStopData } = require('./server')
 
 //First and Second Alert Radius Notification to Use
 cron.schedule('*/15 * * * *', async function () {

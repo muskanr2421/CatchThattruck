@@ -40,6 +40,7 @@ const userRoute = require('./routes/user_routes');
 const vendorRoute = require('./routes/vendor_routes');
 const commonRoute = require('./routes/common_routes')
 const adminRoute = require('./routes/admin_routes');
+const { where } = require("sequelize");
 
 app.set('view engine', 'pug');
 app.use(express.urlencoded({ extended: false }));
@@ -118,6 +119,7 @@ io.on('connection', async (socket) => {
         ) {
           switch (data.endPoint) {
             case '/vendorLocation':
+              await truck.update({ is_online: true}, { where: { truck_id: data.id }})
               trucksId[userId] = data.id;
               await updateVendorLocation(data.lat, data.long, data.id, socket)
               break;
@@ -195,6 +197,7 @@ io.on('connection', async (socket) => {
     console.log('User disconnected:', socket.id);
     console.log('Reason:', reason);
     delete clients[userId];
+    await truck.update({ is_online: false}, { where: { truck_id: trucksId[userId] }})
     delete trucksId[userId];
     clearTimeout(userTruckTimeout);
     clearTimeout(userTimeout);
@@ -475,7 +478,7 @@ async function getUserTrucks(lat, long, id, isCompass, socket) {
 
       let favTrucks = await favTruck.findAll({ where: { user_id: id } })
       const favTruckIds = favTrucks.map(favTruck => favTruck.truck_id);
-      console.log("TrucksId", trucksId)
+      console.log("TruckIDS", trucksId)
       for (const truck of trucks) {
 
         var currentDistance =  calculateDistance(userLat, userLong, truck.lat, truck.long)
@@ -534,16 +537,10 @@ async function getUserTrucks(lat, long, id, isCompass, socket) {
           truck.image_url = avatarData.image_url;
         }
         truck.thumbnail = avatarData.thumbnail;
-    
-        for(const key in trucksId){
-          console.log("IDS", trucksId[key])
-        }
       }
 
       var filteredTrucks = [];
       for(const key in trucksId){
-        console.log("IDS", trucksId[key])
-        //add trucks in filtered truck
         filteredTrucks = trucks.filter(truck => trucksId[key] == truck.truck_id);
       }
       // const filteredTrucks = trucks.filter(truck => trucksId.hasOwnProperty(truck.truck_id));

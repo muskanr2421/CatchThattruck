@@ -93,6 +93,10 @@ const truck = sequelize.define("truck", {
     },
     reject_reason: {
         type: DataTypes.STRING
+    },
+    is_online: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
     }
 },
 {
