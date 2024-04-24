@@ -472,11 +472,10 @@ async function getUserTrucks(lat, long, id, isCompass, socket) {
     type: sequelize.QueryTypes.SELECT,
   })
     .then(async trucks => {
-      // console.log(trucks)
 
       let favTrucks = await favTruck.findAll({ where: { user_id: id } })
       const favTruckIds = favTrucks.map(favTruck => favTruck.truck_id);
-
+      console.log("TrucksId", trucksId)
       for (const truck of trucks) {
 
         var currentDistance =  calculateDistance(userLat, userLong, truck.lat, truck.long)
@@ -535,15 +534,23 @@ async function getUserTrucks(lat, long, id, isCompass, socket) {
           truck.image_url = avatarData.image_url;
         }
         truck.thumbnail = avatarData.thumbnail;
+    
+        for(const key in trucksId){
+          console.log("IDS", trucksId[key])
+        }
       }
 
-      // const filteredTrucks = trucks.filter(truck => trucksId.hasOwnProperty(truck.truck_id));
+      var filteredTrucks;
+      for(const key in trucksId){
+        filteredTrucks = trucks.filter(truck => trucksId[key] == truck.truck_id);
+      }
 
+      console.log(filteredTrucks)
       return socket.emit('APIResponse', JSON.stringify({
         success: true,
         status_code: 200,
         message: 'Trucks Fetched Successfully',
-        truck_data: trucks,
+        truck_data: filteredTrucks,
       }));
     })
     .catch(error => {
