@@ -197,7 +197,9 @@ io.on('connection', async (socket) => {
     console.log('User disconnected:', socket.id);
     console.log('Reason:', reason);
     delete clients[userId];
-    await truck.update({ is_online: false}, { where: { truck_id: trucksId[userId] }})
+    if(trucksId[userId]){
+      await truck.update({ is_online: false}, { where: { truck_id: trucksId[userId] }})
+    } 
     delete trucksId[userId];
     clearTimeout(userTruckTimeout);
     clearTimeout(userTimeout);
