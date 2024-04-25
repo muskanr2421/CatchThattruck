@@ -545,9 +545,9 @@ async function getUserTrucks(lat, long, id, isCompass, socket) {
       var filteredTrucks = [];
       for (const key in trucksId) {
         const filtered = trucks.filter(truck => trucksId[key] == truck.truck_id);
-        filteredTrucks.push(...filtered); // Append the filtered results to filteredTrucks
+        filteredTrucks.push(...filtered);
       }
-      // const filteredTrucks = trucks.filter(truck => trucksId.hasOwnProperty(truck.truck_id));
+      
       console.log(filteredTrucks)
       return socket.emit('APIResponse', JSON.stringify({
         success: true,

@@ -765,10 +765,12 @@ const getEventTruckList = async (req, res) => {
             ],
         });
 
+        
         const formattedData = await Promise.all(favTrucks.map(async (item) => {
             const data = item.truck;
-            const reportData = await report_data.findOne({ where: { user_id: user_id, truck_id: truck.truck_id } })
-            
+            const reportData = await report_data.findOne({ where: { user_id: user_id, truck_id: data.truck_id } })
+            // console.log("Fav Truck",data.truck_id)
+            // console.log(reportData)
             if (!reportData) {
 
                 const [vendorData, rateDetail, ringdata, avatarData, userData] = await Promise.all([
