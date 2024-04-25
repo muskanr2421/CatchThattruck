@@ -119,7 +119,7 @@ io.on('connection', async (socket) => {
         ) {
           switch (data.endPoint) {
             case '/vendorLocation':
-              await truck.update({ is_online: true}, { where: { truck_id: data.id }})
+              await truck.update({ is_online: true }, { where: { truck_id: data.id } })
               trucksId[userId] = data.id;
               await updateVendorLocation(data.lat, data.long, data.id, socket)
               break;
@@ -197,9 +197,9 @@ io.on('connection', async (socket) => {
     console.log('User disconnected:', socket.id);
     console.log('Reason:', reason);
     delete clients[userId];
-    if(trucksId[userId]){
-      await truck.update({ is_online: false}, { where: { truck_id: trucksId[userId] }})
-    } 
+    if (trucksId[userId]) {
+      await truck.update({ is_online: false }, { where: { truck_id: trucksId[userId] } })
+    }
     delete trucksId[userId];
     clearTimeout(userTruckTimeout);
     clearTimeout(userTimeout);
@@ -319,7 +319,7 @@ async function updateVendorLocation(lat, long, id, socket) {
 async function getAllUsersStatus(id, truckLat, truckLong, socket) {
   try {
     const radius = 20;
-    
+
     const query = `SELECT user_id, lat, \`long\`, isCompass
     FROM user HAVING
     ${radius} >= (6371 * acos(cos(radians(:truckLat)) * cos(radians(lat)) * cos(radians(\`long\`) - radians(:truckLong)) + sin(radians(:truckLat)) * sin(radians(lat))));`
@@ -329,7 +329,7 @@ async function getAllUsersStatus(id, truckLat, truckLong, socket) {
       type: sequelize.QueryTypes.SELECT,
     })
       .then(async userData => {
-   
+
         for (const data of userData) {
           if (Object.keys(clients).length === 0) {
             data.status = 0;
@@ -343,17 +343,17 @@ async function getAllUsersStatus(id, truckLat, truckLong, socket) {
                 if (stopData.hasOwnProperty(data.user_id)) {
                   var dataL = stopData[data.user_id];
                   if (dataL.hasOwnProperty(id)) {
-                    let truckData = await truck.findOne({ attributes: ['second_alert'], where: { truck_id: id}})
+                    let truckData = await truck.findOne({ attributes: ['second_alert'], where: { truck_id: id } })
                     const distance = calculateDistanceMiles(truckLat, truckLong, data.lat, data.long)
                     console.log(`${truckLat}  ${truckLong}  ${data.lat}  ${data.long}`)
                     // console.log(distance)
                     // console.log(truckData.second_alert)
-                    if(distance <= truckData.second_alert){
+                    if (distance <= truckData.second_alert) {
                       // console.log(dataL[id])
                       delete dataL[id];
                       // console.log(stopData)
                       data.status = 1;
-                    } else{
+                    } else {
                       data.status = 2;
                     }
                   } else {
@@ -481,9 +481,10 @@ async function getUserTrucks(lat, long, id, isCompass, socket) {
       let favTrucks = await favTruck.findAll({ where: { user_id: id } })
       const favTruckIds = favTrucks.map(favTruck => favTruck.truck_id);
       console.log("TruckIDS", trucksId)
+      console.log("Trucks", trucks)
       for (const truck of trucks) {
 
-        var currentDistance =  calculateDistance(userLat, userLong, truck.lat, truck.long)
+        var currentDistance = calculateDistance(userLat, userLong, truck.lat, truck.long)
         if (currentDistance <= truck.u_turn) {
           await truck.update({ last_distance: currentDistance }, { where: { truck_id: truck.truck_id } })
           if (currentDistance > truck.last_distance) {
@@ -533,17 +534,18 @@ async function getUserTrucks(lat, long, id, isCompass, socket) {
           truck.report_id = 0;
         }
 
-        if(truck.avatar_approved == 2){
+        if (truck.avatar_approved == 2) {
           truck.image_url = truck.avatar_url;
-        } else{
+        } else {
           truck.image_url = avatarData.image_url;
         }
         truck.thumbnail = avatarData.thumbnail;
       }
 
       var filteredTrucks = [];
-      for(const key in trucksId){
-        filteredTrucks = trucks.filter(truck => trucksId[key] == truck.truck_id);
+      for (const key in trucksId) {
+        const filtered = trucks.filter(truck => trucksId[key] == truck.truck_id);
+        filteredTrucks.push(...filtered); // Append the filtered results to filteredTrucks
       }
       // const filteredTrucks = trucks.filter(truck => trucksId.hasOwnProperty(truck.truck_id));
       console.log(filteredTrucks)
@@ -577,7 +579,7 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
 
   // Convert meters to feet
   const distanceInFeet = distanceInMeters * 3.28084;
-  
+
   return distanceInFeet;
 }
 
