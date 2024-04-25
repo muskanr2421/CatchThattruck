@@ -158,9 +158,9 @@ const getUserTrucks = async (req, res) => {
                         truck.report_id = 0;
                     }
 
-                    if(truck.avatar_approved == 2){
+                    if (truck.avatar_approved == 2) {
                         truck.image_url = truck.avatar_url;
-                    } else{
+                    } else {
                         truck.image_url = avatarData.image_url;
                     }
                     truck.thumbnail = avatarData.thumbnail
@@ -304,9 +304,9 @@ const getFavouriteTruckList = async (req, res) => {
             const in_proximity = distance <= 20;
 
             let off_duty;
-            if(truck.is_online){
-                off_duty =  false;
-            } else{
+            if (truck.is_online) {
+                off_duty = false;
+            } else {
                 off_duty = true;
             }
 
@@ -318,9 +318,9 @@ const getFavouriteTruckList = async (req, res) => {
             // }
 
             var imageUrl;
-            if(truck.avatar_approved == 2){
+            if (truck.avatar_approved == 2) {
                 imageUrl = truck.avatar_url;
-            } else{
+            } else {
                 imageUrl = avatarData.image_url;
             }
 
@@ -767,60 +767,64 @@ const getEventTruckList = async (req, res) => {
 
         const formattedData = await Promise.all(favTrucks.map(async (item) => {
             const data = item.truck;
+            const reportData = await report_data.findOne({ where: { user_id: user_id, truck_id: truck.truck_id } })
+            
+            if (!reportData) {
 
-            const [vendorData, rateDetail, ringdata, avatarData, userData] = await Promise.all([
-                vendor.findOne({
-                    attributes: ['company_name'],
-                    where: { vendor_id: data.vendor_id }
-                }),
-                rate_truck.findAll({ where: { truck_id: data.truck_id } }),
-                truckRingtone.findOne({
-                    where: {
-                        truck_id: data.truck_id,
-                        user_id: user_id
-                    }
-                }),
-                avatar.findOne({ where: { avatar_id: data.avatar_id } }),
-                User.findOne({ attributes: ['ringtone_id'], where: { user_id: user_id } })
-            ]);
+                const [vendorData, rateDetail, ringdata, avatarData, userData] = await Promise.all([
+                    vendor.findOne({
+                        attributes: ['company_name'],
+                        where: { vendor_id: data.vendor_id }
+                    }),
+                    rate_truck.findAll({ where: { truck_id: data.truck_id } }),
+                    truckRingtone.findOne({
+                        where: {
+                            truck_id: data.truck_id,
+                            user_id: user_id
+                        }
+                    }),
+                    avatar.findOne({ where: { avatar_id: data.avatar_id } }),
+                    User.findOne({ attributes: ['ringtone_id'], where: { user_id: user_id } })
+                ]);
 
-            data.company_name = vendorData.company_name
+                data.company_name = vendorData.company_name
 
-            const countOfResult = rateDetail.length;
-            let totalRating = 0;
-            for (let i = 0; i < rateDetail.length; i++) {
-                totalRating += rateDetail[i].star_count;
+                const countOfResult = rateDetail.length;
+                let totalRating = 0;
+                for (let i = 0; i < rateDetail.length; i++) {
+                    totalRating += rateDetail[i].star_count;
+                }
+                const averageRating = countOfResult > 0 ? totalRating / countOfResult : 0;
+                data.average_rating = parseFloat(averageRating.toFixed(2));
+
+                let truckRing;
+                if (ringdata) {
+                    truckRing = await rington.findOne({ where: { ringtone_id: ringdata.ringtone_id } })
+                } else {
+                    truckRing = await rington.findOne({ where: { ringtone_id: userData.ringtone_id } })
+                }
+                data.ringtone_name = truckRing[lang_id];
+
+                var imageUrl;
+                if (truck.avatar_approved == 2) {
+                    imageUrl = truck.avatar_url;
+                } else {
+                    imageUrl = avatarData.image_url;
+                }
+
+                return {
+                    truck_id: data.truck_id,
+                    truck_name: data.truck_name,
+                    username: data.username,
+                    company_name: vendorData.company_name,
+                    min_dollar: typeof (data.min_dollar) === 'string' ? (data.min_dollar) : "",
+                    avatar_id: data.avatar_id,
+                    average_rating: parseFloat(averageRating.toFixed(2)),
+                    thumbnail: avatarData.thumbnail,
+                    image_url: imageUrl,
+                    ringtone_name: truckRing[lang_id],
+                };
             }
-            const averageRating = countOfResult > 0 ? totalRating / countOfResult : 0;
-            data.average_rating = parseFloat(averageRating.toFixed(2));
-
-            let truckRing;
-            if (ringdata) {
-                truckRing = await rington.findOne({ where: { ringtone_id: ringdata.ringtone_id } })
-            } else {
-                truckRing = await rington.findOne({ where: { ringtone_id: userData.ringtone_id } })
-            }
-            data.ringtone_name = truckRing[lang_id];
-
-            var imageUrl;
-            if(truck.avatar_approved == 2){
-                imageUrl = truck.avatar_url;
-            } else{
-                imageUrl = avatarData.image_url;
-            }
-
-            return {
-                truck_id: data.truck_id,
-                truck_name: data.truck_name,
-                username: data.username,
-                company_name: vendorData.company_name,
-                min_dollar: typeof (data.min_dollar) === 'string' ? (data.min_dollar) : "",
-                avatar_id: data.avatar_id,
-                average_rating: parseFloat(averageRating.toFixed(2)),
-                thumbnail: avatarData.thumbnail,
-                image_url: imageUrl,
-                ringtone_name: truckRing[lang_id],
-            };
 
         }));
 
