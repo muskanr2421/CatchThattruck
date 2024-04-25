@@ -120,6 +120,11 @@ io.on('connection', async (socket) => {
           switch (data.endPoint) {
             case '/vendorLocation':
               await truck.update({ is_online: true }, { where: { truck_id: data.id } })
+              for (const key in trucksId) {
+                if (data.id == trucksId[key]) {
+                  delete trucksId[userId];
+                }
+              }
               trucksId[userId] = data.id;
               await updateVendorLocation(data.lat, data.long, data.id, socket)
               break;
