@@ -481,9 +481,9 @@ async function getUserTrucks(lat, long, id, isCompass, socket) {
       let favTrucks = await favTruck.findAll({ where: { user_id: id } })
       const favTruckIds = favTrucks.map(favTruck => favTruck.truck_id);
       console.log("TruckIDS", trucksId)
-      console.log("Trucks", trucks.truck_id)
+      
       for (const truck of trucks) {
-
+        console.log("Trucks", trucks.truck_id)
         var currentDistance = calculateDistance(userLat, userLong, truck.lat, truck.long)
         if (currentDistance <= truck.u_turn) {
           await truck.update({ last_distance: currentDistance }, { where: { truck_id: truck.truck_id } })
