@@ -481,7 +481,7 @@ async function getUserTrucks(lat, long, id, isCompass, socket) {
       let favTrucks = await favTruck.findAll({ where: { user_id: id } })
       const favTruckIds = favTrucks.map(favTruck => favTruck.truck_id);
       console.log("TruckIDS", trucksId)
-      console.log("Trucks", trucks)
+      console.log("Trucks", trucks.truck_id)
       for (const truck of trucks) {
 
         var currentDistance = calculateDistance(userLat, userLong, truck.lat, truck.long)
