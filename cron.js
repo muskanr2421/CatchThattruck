@@ -1,12 +1,12 @@
 const cron = require('node-cron');
 const sequelize = require('./models/index');
 const User = require('./models/user')
+const notifi = require('./models/notifi')
 const middleware = require('./common/Utility')
 const clearStopData = require('./server')
-var trucks = [];
 
 //First and Second Alert Radius Notification to Use
-cron.schedule('*/15 * * * *', async function () {
+cron.schedule('* * * * *', async function () {
     try {
         const allUsers = await User.findAll()
         console.log("Cron Started")
@@ -102,24 +102,34 @@ cron.schedule('*/15 * * * *', async function () {
                 var truckIds = []
                 // console.log("Truck First", trucksFirst)
                 // console.log("Truck Second", trucksSecond)
-                
+                let notifiTruck = await notifi.findAll();
                 // console.log(trucks)
+
                 for (const truck of trucksSecond) {
-                    // if(!trucks.includes(truck.truck_id)){
-                        truckIds.push(truck.truck_id);
-                        // trucks.push(truck.truck_id);
-                        middleware.CustomNotification("Truck Alert", `${truck.truck_name} is pretty close to you`, data.fcm_token)
-                    // } 
+                    for(const data of notifiTruck){
+                        if(data.user_id == userId){
+                            if(data.truck_id !== truck.truck_id){
+                                truckIds.push(truck.truck_id);
+                                await notifi.create({ user_id: userId, truck_id: truck.truck_id})
+                                middleware.CustomNotification("Truck Alert", `${truck.truck_name} is pretty close to you`, data.fcm_token)
+                            }
+                        }
+                    }
                 }
 
                 for (const truck of trucksFirst) {
                     // console.log("Truckids--->", truckIds)
-                    // if(!trucks.includes(truck.truck_id)){
-                        if(!truckIds.includes(truck.truck_id)){
-                            // console.log("Entered")
-                            middleware.CustomNotification("Truck Alert", `${truck.truck_name} is in your neighbourhood`, data.fcm_token)
+                    for(const data of notifiTruck){
+                        if(data.user_id == userId){
+                            if(data.truck_id !== truck.truck_id){
+                                if(!truckIds.includes(truck.truck_id)){
+                                    truckIds.push(truck.truck_id)
+                                    await notifi.create({ user_id: userId, truck_id: truck.truck_id})
+                                    middleware.CustomNotification("Truck Alert", `${truck.truck_name} is in your neighbourhood`, data.fcm_token)
+                                }
+                            }
                         }
-                    // }
+                    }
                 }
             }
         }
@@ -135,7 +145,10 @@ cron.schedule('*/15 * * * *', async function () {
 //Clear Stop Data at MidNight 12:00 AM
 cron.schedule('0 0 * * *', async () => {
     clearStopData()
-    trucks = [];
+    await notifi.destroy({
+        where: {}, // Empty where clause to match all entries
+        truncate: true // Optionally truncate the table instead of deleting individual entries
+      })
 }, {
     scheduled: true,
     timezone: 'America/Los_Angeles' // Set the timezone to Pacific Standard Time
