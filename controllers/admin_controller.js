@@ -602,8 +602,19 @@ const deleteAvatar = async (req, res) => {
 
         let avatarExist = await avatar.findOne({ where: { avatar_id: avatar_id}})
 
+        if(avatar_id == 1){
+            return response.sendBadRequestResponse(res, "Cannot Delete Default Avatar")
+        }
+
         if(!avatarExist){
             return response.sendBadRequestResponse(res, "No Avatar Found")
+        }
+
+        let truckResult = await truck.findAll({ where: { avatar_id: avatar_id}})
+        if(truckResult){
+            for(const data of truckResult){
+                await truck.update({ avatar_id: 1}, { where: { truck_id: data.truck_id}})
+            }
         }
 
         await avatar.destroy({ where: { avatar_id: avatar_id}})
