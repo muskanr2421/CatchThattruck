@@ -30,5 +30,14 @@ router.post('/deleteAvatar', admin.verifyToken, admin.deleteAvatar)
 router.get('/getAvatarImages', admin.verifyToken, admin.getAvatarList)
 router.get('/getImageStatusList', admin.verifyToken, admin.getImageStatusList)
 router.post('/updateImageStatus', admin.verifyToken, admin.updateImageStatus)
+router.post('/uploadAvatarUpdated', admin.verifyToken, function(req, res, next) {
+    admin.uploadImg.single('avatar')(req, res, function(err) {
+        if (err) {
+            console.error(err);
+            return response.sendBadRequestResponse(res, err.message);
+        }
+        next();
+    });
+}, admin.uploadAvatarUpdated)
 
 module.exports = router;

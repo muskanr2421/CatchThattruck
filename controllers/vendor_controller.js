@@ -24,6 +24,8 @@ const moment = require('moment')
 const multer = require('multer');
 const sizeOf = require('image-size');
 const path = require("path");
+const imageThumbnail = require('image-thumbnail');
+const fs = require('fs');
 
 const baseUrl = "https://catchthattruck.onrender.com/"
 
@@ -837,13 +839,28 @@ const addTruck = async (req, res) => {
         let info;
         if(req.file && req.file.filename){
             const fileName = req.file.filename;
+
+            const imagePath = 'images'; // Folder path where you want to save the thumbnail
+            const imageUrl = baseUrl + fileName; // URL of the original image
+            const thumbnailName = `thumbnail_${fileName}`
+            const thumbnailPath = path.join(imagePath, thumbnailName); // Path to save the thumbnail
+            let options = { width: 56, height: 57 }
+        
+            const thumbnail = await imageThumbnail({ uri: imageUrl }, options);
+            fs.writeFileSync(thumbnailPath, thumbnail); // Write thumbnail data to file
+    
+            // Generate URL for the thumbnail
+            const thumbnailUrl = baseUrl+thumbnailName;
+            console.log('Thumbnail URL:', thumbnailUrl);
+
             info = {
                 vendor_id: vendor_id,
                 truck_name: data.truck_name,
                 username: data.username,
                 password: encrypt(data.password),
                 is_primary: false,
-                avatar_url: baseUrl+fileName, 
+                avatar_url: imageUrl, 
+                thumbnail_url: thumbnailUrl,
                 avatar_approved: 1
             } 
         } else{
@@ -1015,11 +1032,13 @@ const getVendorTruck = async (req, res) => {
             let avatarResult = await avatar.findOne({
                 where: { avatar_id: truck.avatar_id }
             })
-            let imageUrl;
+            let imageUrl, thumbnailUrl;
             if(truck.avatar_approved == 2){
                 imageUrl = truck.avatar_url;
+                thumbnailUrl = truck.thumbnail_url;
             } else{
                 imageUrl = avatarResult.image_url;
+                thumbnailUrl = avatarResult.thumbnail;
             }
 
             let avatarId;
@@ -1036,7 +1055,7 @@ const getVendorTruck = async (req, res) => {
                 avatar_id: avatarId,
                 is_primary: truck.is_primary,
                 password: decrypt(truck.password),
-                thumbnail: avatarResult.thumbnail,
+                thumbnail: thumbnailUrl,
                 image_url: imageUrl,
                 avatar_approved: truck.avatar_approved,
                 reject_reason: truck.reject_reason
@@ -1421,8 +1440,21 @@ const uploadAvatar = async (req, res) => {
         //       return response.sendBadRequestResponse(res, "Please upload a file")
         //     }
         //   })
+
+        const imagePath = 'images'; // Folder path where you want to save the thumbnail
+        const imageUrl = baseUrl + fileName; // URL of the original image
+        const thumbnailName = `thumbnail_${fileName}`
+        const thumbnailPath = path.join(imagePath, thumbnailName); // Path to save the thumbnail
+        let options = { width: 56, height: 57 }
+    
+        const thumbnail = await imageThumbnail({ uri: imageUrl }, options);
+        fs.writeFileSync(thumbnailPath, thumbnail); // Write thumbnail data to file
+
+        // Generate URL for the thumbnail
+        const thumbnailUrl = baseUrl+thumbnailName;
+        console.log('Thumbnail URL:', thumbnailUrl);
         
-        await truck.update({ avatar_url: baseUrl+fileName, avatar_approved: 1 }, { where: { truck_id: truck_id}})
+        await truck.update({ avatar_url: baseUrl+fileName, thumbnail_url: thumbnailUrl, avatar_approved: 1 }, { where: { truck_id: truck_id}})
         return response.sendSuccessResponseMobile(res, [], language.image_uploaded[lang_id])
 
     } catch(err){
@@ -1440,11 +1472,24 @@ const editTruckUpdated = async (req, res) => {
         let info;
         if(req.file && req.file.filename){
             const fileName = req.file.filename;
+
+            const imagePath = 'images'; 
+            const imageUrl = baseUrl + fileName; 
+            const thumbnailName = `thumbnail_${fileName}`
+            const thumbnailPath = path.join(imagePath, thumbnailName);
+            let options = { width: 56, height: 57 }
+        
+            const thumbnail = await imageThumbnail({ uri: imageUrl }, options);
+            fs.writeFileSync(thumbnailPath, thumbnail);
+    
+            const thumbnailUrl = baseUrl+thumbnailName;
+
             info = {
                 truck_name: data.truck_name,
                 username: data.username,
                 password: encrypt(data.password),
-                avatar_url: baseUrl+fileName, 
+                avatar_url: imageUrl, 
+                thumbnail_url: thumbnailUrl,
                 avatar_approved: 1
             }
         } else{

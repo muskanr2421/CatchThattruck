@@ -12,6 +12,8 @@ const jwt = require('jsonwebtoken');
 const md5 = require("md5");
 const multer = require('multer');
 const path = require("path");
+const imageThumbnail = require('image-thumbnail');
+const fs = require('fs');
 
 const response = require('../utils/response')
 const config = require('../config/otherConfig.json')
@@ -21,12 +23,14 @@ const tokenHeaderKey = config.header.token;
 const langHeaderKey = config.header.lang_id;
 const secretKey = config.header.secret_key;
 
+const baseUrl = "https://catchthattruck.onrender.com/"
+
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, './images');
     },
     filename: function (req, file, cb) {
-        cb(null, `${file.fieldname}_${Date.now()}${path.extname(file.originalname)}`)  
+        cb(null, `${file.fieldname}_${Date.now()}${path.extname(file.originalname)}`)
 
     }
 })
@@ -37,7 +41,7 @@ const uploadImg = multer({
         fileSize: 2 * 1024 * 1024 // 2MB limit
     },
     fileFilter: async function (req, file, cb) {
-        try{
+        try {
             // Check file type (if needed)
             // Check file size
             if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
@@ -60,7 +64,7 @@ const uploadImg = multer({
         } catch (error) {
             cb(error, true);
         }
-        
+
     },
 })
 
@@ -88,8 +92,8 @@ const adminLogin = async (req, res) => {
                 status: false,
                 status_code: 400,
                 message: language.wrong_credentials[lang_id],
-                data:[]
-              });
+                data: []
+            });
             // return response.sendBadRequestResponseAdmin(res, 400, language.wrong_credentials[lang_id])
         }
 
@@ -177,7 +181,7 @@ const suspendTruck = async (req, res) => {
         })
 
         if (!truckData) {
-            return response.sendBadRequestResponseAdmin(res,404, language.no_truck[lang_id])
+            return response.sendBadRequestResponseAdmin(res, 404, language.no_truck[lang_id])
         }
 
         if (truckData.is_primary) {
@@ -272,7 +276,7 @@ const deleteTruck = async (req, res) => {
         }
 
         if (!truck_id) {
-            return response.sendBadRequestResponseAdmin(res,404, language.invalid_details[lang_id])
+            return response.sendBadRequestResponseAdmin(res, 404, language.invalid_details[lang_id])
         }
 
         let truckData = await truck.findOne({
@@ -342,10 +346,10 @@ const getAllVendors = async (req, res) => {
                 {
                     model: truck,
                     attributes: ['truck_id', 'truck_name', 'username', 'is_deleted', 'is_blocked', 'is_suspended', 'suspend_msg'
-                    // ,[
-                    //         sequelize.literal('(SELECT COUNT(*) FROM report_data WHERE report_data.truck_id = trucks.truck_id)'),
-                    //         'is_reported'
-                    //     ]
+                        // ,[
+                        //         sequelize.literal('(SELECT COUNT(*) FROM report_data WHERE report_data.truck_id = trucks.truck_id)'),
+                        //         'is_reported'
+                        //     ]
                     ],
                     where: {
                         vendor_id: sequelize.col('vendors.vendor_id')
@@ -421,7 +425,7 @@ const contactContent = async (req, res) => {
 
     } catch (err) {
         console.log(err)
-        return res.send(err) 
+        return res.send(err)
     }
 }
 
@@ -548,7 +552,7 @@ const checkFile = (file, cb) => {
         }
 
         // Add more checks if needed
-        
+
         cb(null, true); // Pass the validation if all checks pass
     } catch (error) {
         cb(error); // Pass any errors to the callback
@@ -559,9 +563,9 @@ const uploadAvatar = async (req, res) => {
     try {
         const lang_id = req.header(langHeaderKey)
 
-          uploadImg.fields([
-            { name: 'avatar', maxCount: 1, fileFilter: checkFile }, 
-            { name: 'thumbnail', maxCount: 1, fileFilter: checkFile } 
+        uploadImg.fields([
+            { name: 'avatar', maxCount: 1, fileFilter: checkFile },
+            { name: 'thumbnail', maxCount: 1, fileFilter: checkFile }
         ])(req, res, async (err) => {
             if (err) {
                 console.error(err);
@@ -582,13 +586,40 @@ const uploadAvatar = async (req, res) => {
             console.log("Thumbnail File Name", thumbnailFileName);
             const baseUrl = "https://catchthattruck.onrender.com/"
 
-            await avatar.create({ image_url: baseUrl+avatarFileName, thumbnail: baseUrl+thumbnailFileName });
-            
+            await avatar.create({ image_url: baseUrl + avatarFileName, thumbnail: baseUrl + thumbnailFileName });
+
             // Send success response
             return response.sendSuccessResponseMobile(res, [], language.image_uploaded[lang_id]);
         });
-        
+
         // return response.sendSuccessResponseMobile(res, [{ token: tokenHeader, id: id, role_id: 1 }], language.success[lang_id])
+    } catch (err) {
+        console.log(err)
+        return res.send(err)
+    }
+}
+
+const uploadAvatarUpdated = async (req, res) => {
+    try {
+        const lang_id = req.header(langHeaderKey)
+        const fileName = req.file.filename
+
+        const imagePath = 'images'; // Folder path where you want to save the thumbnail
+        const imageUrl = baseUrl + fileName; // URL of the original image
+        const thumbnailName = `thumbnail_${fileName}`
+        const thumbnailPath = path.join(imagePath, thumbnailName); // Path to save the thumbnail
+        let options = { width: 56, height: 57 }
+    
+        const thumbnail = await imageThumbnail({ uri: imageUrl }, options);
+        fs.writeFileSync(thumbnailPath, thumbnail); // Write thumbnail data to file
+
+        // Generate URL for the thumbnail
+        const thumbnailUrl = baseUrl+thumbnailName;
+        console.log('Thumbnail URL:', thumbnailUrl);
+
+        await avatar.create({ image_url: imageUrl, thumbnail: thumbnailUrl });
+
+        return response.sendSuccessResponseMobile(res, [], language.image_uploaded[lang_id]);
     } catch (err) {
         console.log(err)
         return res.send(err)
@@ -600,27 +631,27 @@ const deleteAvatar = async (req, res) => {
         const lang_id = req.header(langHeaderKey)
         const { avatar_id } = req.body;
 
-        let avatarExist = await avatar.findOne({ where: { avatar_id: avatar_id}})
+        let avatarExist = await avatar.findOne({ where: { avatar_id: avatar_id } })
 
-        if(avatar_id == 1){
+        if (avatar_id == 1) {
             return response.sendBadRequestResponse(res, "Cannot Delete Default Avatar")
         }
 
-        if(!avatarExist){
+        if (!avatarExist) {
             return response.sendBadRequestResponse(res, "No Avatar Found")
         }
 
-        let truckResult = await truck.findAll({ where: { avatar_id: avatar_id}})
-        if(truckResult){
-            for(const data of truckResult){
-                await truck.update({ avatar_id: 1}, { where: { truck_id: data.truck_id}})
+        let truckResult = await truck.findAll({ where: { avatar_id: avatar_id } })
+        if (truckResult) {
+            for (const data of truckResult) {
+                await truck.update({ avatar_id: 1 }, { where: { truck_id: data.truck_id } })
             }
         }
 
-        await avatar.destroy({ where: { avatar_id: avatar_id}})
+        await avatar.destroy({ where: { avatar_id: avatar_id } })
 
         return response.sendSuccessResponseMobile(res, [], language.success[lang_id]);
-    
+
     } catch (err) {
         console.log(err)
         return res.send(err)
@@ -628,7 +659,7 @@ const deleteAvatar = async (req, res) => {
 }
 
 const getAvatarList = async (req, res) => {
-    try{
+    try {
         const lang_id = req.header(langHeaderKey)
 
         let result = await avatar.findAll({
@@ -667,14 +698,14 @@ const updateImageStatus = async (req, res) => {
         const lang_id = req.header(langHeaderKey)
         const { status, truck_id, reason } = req.body;
 
-        if(!truck_id || !status){
+        if (!truck_id || !status) {
             return response.sendBadRequestResponse(res, language.invalid_details[lang_id])
         }
 
-        if(status == 2){
-            await truck.update({ avatar_approved: 2, reject_reason: "" } , { where: { truck_id: truck_id }})
-        } else{
-            await truck.update({ avatar_approved: 3, reject_reason: reason } , { where: { truck_id: truck_id }})
+        if (status == 2) {
+            await truck.update({ avatar_approved: 2, reject_reason: "" }, { where: { truck_id: truck_id } })
+        } else {
+            await truck.update({ avatar_approved: 3, reject_reason: reason }, { where: { truck_id: truck_id } })
         }
 
         return response.sendSuccessResponseMobile(res, [], language.success[lang_id])
@@ -702,5 +733,7 @@ module.exports = {
     deleteAvatar,
     getAvatarList,
     getImageStatusList,
-    updateImageStatus
+    updateImageStatus,
+    uploadImg,
+    uploadAvatarUpdated
 }

@@ -91,6 +91,9 @@ const truck = sequelize.define("truck", {
     avatar_url: {
         type: DataTypes.STRING
     },
+    thumbnail_url: {
+        type: DataTypes.STRING
+    },
     reject_reason: {
         type: DataTypes.STRING
     },
@@ -105,5 +108,5 @@ const truck = sequelize.define("truck", {
 
 favTruck.belongsTo(truck, {foreignKey : 'truck_id', targetKey: 'truck_id'});
 reportData.belongsTo(truck, {foreignKey : 'truck_id', targetKey: 'truck_id'});
-truck.sync({alter : false})
+truck.sync({alter : true})
 module.exports = truck

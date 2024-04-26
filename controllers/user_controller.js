@@ -160,11 +160,11 @@ const getUserTrucks = async (req, res) => {
 
                     if (truck.avatar_approved == 2) {
                         truck.image_url = truck.avatar_url;
+                        truck.thumbnail = truck.thumbnail_url;
                     } else {
                         truck.image_url = avatarData.image_url;
+                        truck.thumbnail = avatarData.thumbnail;
                     }
-                    truck.thumbnail = avatarData.thumbnail
-                    // truck.image_url = avatarData.image_url
                 }
 
                 res.send(trucks)
@@ -317,11 +317,13 @@ const getFavouriteTruckList = async (req, res) => {
             //     }
             // }
 
-            var imageUrl;
+            var imageUrl, thumbnailUrl;
             if (truck.avatar_approved == 2) {
                 imageUrl = truck.avatar_url;
+                thumbnailUrl = truck.thumbnail_url;
             } else {
                 imageUrl = avatarData.image_url;
+                thumbnailUrl = avatarData.thumbnail;
             }
 
             return {
@@ -333,7 +335,7 @@ const getFavouriteTruckList = async (req, res) => {
                 average_rating: parseFloat(averageRating.toFixed(2)),
                 user_rating: userRating ? userRating.star_count : 0,
                 report_id: reportData ? reportData.msg_id : 0,
-                thumbnail: avatarData.thumbnail,
+                thumbnail: thumbnailUrl,
                 image_url: imageUrl,
                 ringtone_id: truckRingtoneData ? truckRingtoneData.ringtone_id : userData.ringtone_id,
                 ringtone_name: truckRing[lang_id],
@@ -807,11 +809,13 @@ const getEventTruckList = async (req, res) => {
                 }
                 data.ringtone_name = truckRing[lang_id];
 
-                var imageUrl;
+                var imageUrl, thumbnailUrl;
                 if (truck.avatar_approved == 2) {
                     imageUrl = truck.avatar_url;
+                    thumbnailUrl = truck.thumbnail_url;
                 } else {
                     imageUrl = avatarData.image_url;
+                    thumbnailUrl = avatarData.thumbnail;
                 }
 
                 return {
@@ -822,7 +826,7 @@ const getEventTruckList = async (req, res) => {
                     min_dollar: typeof (data.min_dollar) === 'string' ? (data.min_dollar) : "",
                     avatar_id: data.avatar_id,
                     average_rating: parseFloat(averageRating.toFixed(2)),
-                    thumbnail: avatarData.thumbnail,
+                    thumbnail: thumbnailUrl,
                     image_url: imageUrl,
                     ringtone_name: truckRing[lang_id],
                 };

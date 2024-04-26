@@ -486,7 +486,7 @@ async function getUserTrucks(lat, long, id, isCompass, socket) {
       let favTrucks = await favTruck.findAll({ where: { user_id: id } })
       const favTruckIds = favTrucks.map(favTruck => favTruck.truck_id);
       console.log("TruckIDS", trucksId)
-      
+
       for (const truck of trucks) {
         console.log("Trucks", truck.truck_id)
         var currentDistance = calculateDistance(userLat, userLong, truck.lat, truck.long)
@@ -541,17 +541,18 @@ async function getUserTrucks(lat, long, id, isCompass, socket) {
 
         if (truck.avatar_approved == 2) {
           truck.image_url = truck.avatar_url;
+          truck.thumbnail = truck.thumbnail_url;
         } else {
           truck.image_url = avatarData.image_url;
+          truck.thumbnail = avatarData.thumbnail;
         }
-        truck.thumbnail = avatarData.thumbnail;
       }
       const uniqueTruckIds = {};
       for (const key in trucksId) {
         uniqueTruckIds[trucksId[key]] = true;
       }
       console.log("UniqueTrucks", uniqueTruckIds)
-      
+
       var filteredTrucks = [];
       // for (const key in trucksId) {
       //   const filtered = trucks.filter(truck => trucksId[key] == truck.truck_id);
@@ -561,7 +562,7 @@ async function getUserTrucks(lat, long, id, isCompass, socket) {
         const filtered = trucks.filter(truck => key == truck.truck_id);
         filteredTrucks.push(...filtered);
       }
-      
+
       // console.log(filteredTrucks)
       return socket.emit('APIResponse', JSON.stringify({
         success: true,
