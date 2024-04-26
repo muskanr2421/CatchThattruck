@@ -997,7 +997,7 @@ const getVendorTruck = async (req, res) => {
         // console.log("encrypt", decryptedText)
 
         var result = await truck.findAll({
-            attributes: ["truck_id", "truck_name", "username", "avatar_id", "is_primary", "password", "avatar_approved", "avatar_url", "reject_reason"],
+            attributes: ["truck_id", "truck_name", "username", "avatar_id", "is_primary", "password", "avatar_approved", "avatar_url", "thumbnail_url", "reject_reason"],
             where: {
                 vendor_id: vendor_id
             },
@@ -1033,6 +1033,7 @@ const getVendorTruck = async (req, res) => {
                 where: { avatar_id: truck.avatar_id }
             })
             let imageUrl, thumbnailUrl;
+            console.log("Thumbnail", thumbnailUrl)
             if(truck.avatar_approved == 2){
                 imageUrl = truck.avatar_url;
                 thumbnailUrl = truck.thumbnail_url;
@@ -1040,6 +1041,7 @@ const getVendorTruck = async (req, res) => {
                 imageUrl = avatarResult.image_url;
                 thumbnailUrl = avatarResult.thumbnail;
             }
+            console.log("Thumbnail", thumbnailUrl)
 
             let avatarId;
             if(truck.avatar_approved == 0){
