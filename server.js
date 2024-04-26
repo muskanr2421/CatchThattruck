@@ -488,7 +488,7 @@ async function getUserTrucks(lat, long, id, isCompass, socket) {
       console.log("TruckIDS", trucksId)
       
       for (const truck of trucks) {
-        console.log("Trucks", trucks.truck_id)
+        console.log("Trucks", truck.truck_id)
         var currentDistance = calculateDistance(userLat, userLong, truck.lat, truck.long)
         if (currentDistance <= truck.u_turn) {
           await truck.update({ last_distance: currentDistance }, { where: { truck_id: truck.truck_id } })
@@ -546,10 +546,18 @@ async function getUserTrucks(lat, long, id, isCompass, socket) {
         }
         truck.thumbnail = avatarData.thumbnail;
       }
-
-      var filteredTrucks = [];
+      const uniqueTruckIds = {};
       for (const key in trucksId) {
-        const filtered = trucks.filter(truck => trucksId[key] == truck.truck_id);
+        uniqueTruckIds[trucksId[key]] = true;
+      }
+      
+      var filteredTrucks = [];
+      // for (const key in trucksId) {
+      //   const filtered = trucks.filter(truck => trucksId[key] == truck.truck_id);
+      //   filteredTrucks.push(...filtered);
+      // }
+      for (const key in uniqueTruckIds) {
+        const filtered = trucks.filter(truck => uniqueTruckIds[key] === truck.truck_id);
         filteredTrucks.push(...filtered);
       }
       
