@@ -550,6 +550,7 @@ async function getUserTrucks(lat, long, id, isCompass, socket) {
       for (const key in trucksId) {
         uniqueTruckIds[trucksId[key]] = true;
       }
+      console.log("UniqueTrucks", uniqueTruckIds)
       
       var filteredTrucks = [];
       // for (const key in trucksId) {
@@ -557,11 +558,11 @@ async function getUserTrucks(lat, long, id, isCompass, socket) {
       //   filteredTrucks.push(...filtered);
       // }
       for (const key in uniqueTruckIds) {
-        const filtered = trucks.filter(truck => uniqueTruckIds[key] === truck.truck_id);
+        const filtered = trucks.filter(truck => key == truck.truck_id);
         filteredTrucks.push(...filtered);
       }
       
-      console.log(filteredTrucks)
+      // console.log(filteredTrucks)
       return socket.emit('APIResponse', JSON.stringify({
         success: true,
         status_code: 200,
