@@ -101,14 +101,12 @@ cron.schedule('*/15 * * * *', async function () {
                 });
                 var truckIds = []
                 // console.log("Truck First", trucksFirst)
-                // console.log("Truck Second", trucksSecond)
-                let notifiTruck = await notifi.findAll();
-                // console.log(trucks)
+                // console.log("Truck Second", trucksSecond)        
 
                 for (const truck of trucksSecond) {
                     truckIds.push(truck.truck_id);
-                    let result = await notifi.findOne({ where: { user_id: userId, truck_id: truck.truck_id}})
-                    if(!result){
+                    let result = await notifi.findOne({ where: { user_id: userId, truck_id: truck.truck_id } })
+                    if (!result) {
                         await notifi.create({ user_id: userId, truck_id: truck.truck_id })
                         middleware.CustomNotification("Truck Alert", `${truck.truck_name} is pretty close to you`, data.fcm_token)
                     }
@@ -118,22 +116,19 @@ cron.schedule('*/15 * * * *', async function () {
                 for (const truck of trucksFirst) {
                     // console.log("Truckids--->", truckIds)
                     if (!truckIds.includes(truck.truck_id)) {
-                        let result = await notifi.findOne({ where: { user_id: userId, truck_id: truck.truck_id}})
-                        if(!result){
+                        let result = await notifi.findOne({ where: { user_id: userId, truck_id: truck.truck_id } })
+                        if (!result) {
                             truckIds.push(truck.truck_id)
                             await notifi.create({ user_id: userId, truck_id: truck.truck_id })
                             middleware.CustomNotification("Truck Alert", `${truck.truck_name} is in your neighbourhood`, data.fcm_token)
-                        }  
+                        }
                     }
                 }
             }
         }
-
     } catch (err) {
         console.log('cron err : ', err);
     }
-
-
 });
 
 

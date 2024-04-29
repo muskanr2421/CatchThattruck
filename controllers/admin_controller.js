@@ -664,8 +664,9 @@ const getAvatarList = async (req, res) => {
 
         let result = await avatar.findAll({
             attributes: ["avatar_id", "image_url", "thumbnail"],
+            where: Sequelize.literal('avatar_id <> 1')
         });
-
+        
         return response.sendSuccessResponseMobile(res, result, language.success[lang_id]);
     } catch (err) {
         console.log(err)

@@ -1340,7 +1340,8 @@ const getTruckAvatar = async (req, res) => {
         const lang_id = req.header(langHeaderKey);
         
         let result = await avatar.findAll({
-            attributes: ['avatar_id', 'image_url', 'thumbnail']
+            attributes: ['avatar_id', 'image_url', 'thumbnail'],
+            where: Sequelize.literal('avatar_id <> 1')
         })
 
         return response.sendSuccessResponseMobile(res, result, language.success[lang_id])

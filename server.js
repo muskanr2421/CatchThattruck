@@ -475,6 +475,7 @@ async function getUserTrucks(lat, long, id, isCompass, socket) {
   }
 
   const radius = 20; // 20km radius
+  var favTruckCount;
 
   const query = `SELECT truck_id, truck_name, username, lat, \`long\`, avatar_id, vendor_id, avatar_approved, avatar_url, thumbnail_url FROM truck HAVING ${radius} >= (6371 * ACOS(COS(RADIANS(:userLat)) * COS(RADIANS(lat)) * COS(RADIANS(\`long\`) - RADIANS(:userLong)) + SIN(RADIANS(:userLat)) * SIN(RADIANS(lat))))`;
   sequelize.query(query, {
@@ -484,6 +485,7 @@ async function getUserTrucks(lat, long, id, isCompass, socket) {
     .then(async trucks => {
 
       let favTrucks = await favTruck.findAll({ where: { user_id: id } })
+      favTruckCount = favTrucks.length;
       const favTruckIds = favTrucks.map(favTruck => favTruck.truck_id);
       console.log("TruckIDS", trucksId)
 
@@ -568,6 +570,7 @@ async function getUserTrucks(lat, long, id, isCompass, socket) {
         success: true,
         status_code: 200,
         message: 'Trucks Fetched Successfully',
+        fav_truck_count: favTruckCount,
         truck_data: filteredTrucks,
       }));
     })
