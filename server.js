@@ -485,7 +485,11 @@ async function getUserTrucks(lat, long, id, isCompass, socket) {
     .then(async trucks => {
 
       let favTrucks = await favTruck.findAll({ where: { user_id: id } })
-      favTruckCount = favTrucks.length;
+      if (favTrucks.length == 0) {
+        favTruckCount = 0;
+      } else {
+        favTruckCount = favTrucks.length;
+      }
       const favTruckIds = favTrucks.map(favTruck => favTruck.truck_id);
       console.log("TruckIDS", trucksId)
 
