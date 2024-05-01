@@ -50,7 +50,8 @@ cron.schedule('*/15 * * * *', async function () {
                     ft.user_id = :userId 
                     AND ft.notifi = true
                     AND (
-                        (6371 * ACOS(COS(RADIANS(:userLat)) * COS(RADIANS(t.lat)) * COS(RADIANS(t.\`long\`) - RADIANS(:userLong)) + SIN(RADIANS(:userLat)) * SIN(RADIANS(t.lat)))) <= t.first_alert / 0.62137);`
+                        (6371 * ACOS(COS(RADIANS(:userLat)) * COS(RADIANS(t.lat)) * COS(RADIANS(t.\`long\`) - RADIANS(:userLong)) + SIN(RADIANS(:userLat)) * SIN(RADIANS(t.lat)))) <= t.first_alert / 0.62137
+                    );`
 
                     const queryQ = `SELECT t.truck_id, t.truck_name, t.username, t.lat, t.\`long\`, t.avatar_id, (6371 * ACOS(COS(RADIANS(:userLat)) * COS(RADIANS(t.lat)) * COS(RADIANS(t.\`long\`) - RADIANS(:userLong)) + SIN(RADIANS(:userLat)) * SIN(RADIANS(t.lat)))) AS distance FROM truck t INNER JOIN favourite_truck ft ON t.truck_id = ft.truck_id WHERE ft.user_id = :userId AND (distance <= t.first_radius / 0.62137 OR distance <= t.second_radius / 0.62137)`;
                 }
@@ -99,29 +100,29 @@ cron.schedule('*/15 * * * *', async function () {
                     replacements: { userLat, userLong, userId },
                     type: sequelize.QueryTypes.SELECT,
                 });
-                var truckIds = []
+                var truckIds = [];
                 // console.log("Truck First", trucksFirst)
                 // console.log("Truck Second", trucksSecond)        
 
                 for (const truck of trucksSecond) {
                     truckIds.push(truck.truck_id);
-                    let result = await notifi.findOne({ where: { user_id: userId, truck_id: truck.truck_id } })
-                    if (!result) {
-                        await notifi.create({ user_id: userId, truck_id: truck.truck_id })
+                    // let result = await notifi.findOne({ where: { user_id: userId, truck_id: truck.truck_id } })
+                    // if (!result) {
+                        // await notifi.create({ user_id: userId, truck_id: truck.truck_id })
                         middleware.CustomNotification("Truck Alert", `${truck.truck_name} is pretty close to you`, data.fcm_token)
-                    }
+                    // }
                 }
 
 
                 for (const truck of trucksFirst) {
                     // console.log("Truckids--->", truckIds)
                     if (!truckIds.includes(truck.truck_id)) {
-                        let result = await notifi.findOne({ where: { user_id: userId, truck_id: truck.truck_id } })
-                        if (!result) {
-                            truckIds.push(truck.truck_id)
-                            await notifi.create({ user_id: userId, truck_id: truck.truck_id })
+                        // let result = await notifi.findOne({ where: { user_id: userId, truck_id: truck.truck_id } })
+                        // if (!result) {
+                            // truckIds.push(truck.truck_id)
+                            // await notifi.create({ user_id: userId, truck_id: truck.truck_id })
                             middleware.CustomNotification("Truck Alert", `${truck.truck_name} is in your neighbourhood`, data.fcm_token)
-                        }
+                        // }
                     }
                 }
             }

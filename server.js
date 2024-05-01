@@ -40,7 +40,6 @@ const userRoute = require('./routes/user_routes');
 const vendorRoute = require('./routes/vendor_routes');
 const commonRoute = require('./routes/common_routes')
 const adminRoute = require('./routes/admin_routes');
-const { where } = require("sequelize");
 
 app.set('view engine', 'pug');
 app.use(express.urlencoded({ extended: false }));
