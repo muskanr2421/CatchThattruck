@@ -307,6 +307,16 @@ async function stop(lat, long, userId, socket) {
 async function updateVendorLocation(lat, long, id, socket) {
   try {
     await truck.update({ lat: lat, long: long }, { where: { truck_id: parseInt(id) } })
+    const allUsers = await user.findAll()
+
+    for (const data of allUsers) {
+      const userLat = data.lat;
+      const userLong = data.long;
+      const userId = data.user_id;
+
+      
+    }
+
     await getAllUsersStatus(id, lat, long, socket)
     // return socket.emit('APIResponse', JSON.stringify({
     //   success: true,

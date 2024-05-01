@@ -1467,6 +1467,7 @@ const uploadAvatar = async (req, res) => {
 }
 
 const editTruckUpdated = async (req, res) => {
+    
     try{
         const lang_id = req.header(langHeaderKey);
         const data = req.body;
