@@ -357,9 +357,13 @@ async function updateVendorLocation(lat, long, id, socket) {
         if (distance <= truckDetail.first_alert) {
           notifi[userId + id] = true;
           if (distance <= truckDetail.second_alert) {
-            middleware.CustomNotification("Truck Alert", `${truckDetail.truck_name} is pretty close to you`, data.fcm_token)
+            if(data.fcm_token){
+              middleware.CustomNotification("Truck Alert", `${truckDetail.truck_name} is pretty close to you`, data.fcm_token)
+            }
           } else {
-            middleware.CustomNotification("Truck Alert", `${truckDetail.truck_name} is in your neighbourhood`, data.fcm_token)
+            if(data.fcm_token){
+              middleware.CustomNotification("Truck Alert", `${truckDetail.truck_name} is in your neighbourhood`, data.fcm_token)
+            }
           }
         }
       }
