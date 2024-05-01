@@ -659,11 +659,23 @@ async function getUserActiveTrucks(lat, long, id, socket) {
 
     const truckIds = Object.values(trucksId);
     const uniqueTruckIds = [...new Set(truckIds)];
+    let activeTruckCount;
+    if(uniqueTruckIds.length == 0){
+      activeTruckCount = 0;
+    } else{
+      activeTruckCount = uniqueTruckIds.length;
+    }
 
     let favTrucks = await favTruck.findAll({ where: { user_id: id } })
+    var favTruckCount;
+    if (favTrucks.length == 0) {
+      favTruckCount = 0;
+    } else {
+      favTruckCount = favTrucks.length;
+    }
 
     const favTruckIds = favTrucks.map(favTruck => favTruck.truck_id);
-
+      
     const resultArray = [];
 
     for (const value of uniqueTruckIds) {
@@ -737,6 +749,8 @@ async function getUserActiveTrucks(lat, long, id, socket) {
       success: true,
       status_code: 200,
       message: 'Trucks Fetched Successfully',
+      fav_truck_count: favTruckCount,
+      active_truck_count: activeTruckCount,
       truck_data: resultArray,
     }));
   } catch (error) {
