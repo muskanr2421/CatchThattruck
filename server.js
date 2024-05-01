@@ -9,6 +9,7 @@ var clients = {};
 var trucksId = {};
 var stopData = {};
 var truckClient = {};
+var notifi = {};
 
 const jwt = require('jsonwebtoken');
 const config = require('./config/otherConfig.json')
@@ -40,6 +41,7 @@ const userRoute = require('./routes/user_routes');
 const vendorRoute = require('./routes/vendor_routes');
 const commonRoute = require('./routes/common_routes')
 const adminRoute = require('./routes/admin_routes');
+const { where } = require("sequelize");
 
 app.set('view engine', 'pug');
 app.use(express.urlencoded({ extended: false }));
@@ -109,7 +111,7 @@ io.on('connection', async (socket) => {
           data: [],
         }));
       }
-      if (data.endPoint == '/vendorLocation' || data.endPoint == '/getUserTrucks' || data.endPoint == '/getUserDetails' || data.endPoint == '/takeUturn' || data.endPoint == '/stopTrucks') {
+      if (data.endPoint == '/vendorLocation' || data.endPoint == '/getUserTrucks' || data.endPoint == '/getActiveUserTrucks' || data.endPoint == '/getUserDetails' || data.endPoint == '/takeUturn' || data.endPoint == '/stopTrucks') {
         if (
           typeof data.id === 'string' &&
           typeof data.lat === 'string' &&
@@ -142,6 +144,9 @@ io.on('connection', async (socket) => {
               } else {
                 return emitError(socket);
               }
+              break;
+            case '/getActiveUserTrucks':
+              await getUserActiveTrucks(data.lat, data.long, data.id, socket)
               break;
             case '/getUserDetails':
               // await getAllUsersStatus(socket);
@@ -200,6 +205,7 @@ io.on('connection', async (socket) => {
   socket.on('disconnect', async (reason) => {
     console.log('User disconnected:', socket.id);
     console.log('Reason:', reason);
+    notifi = {};
     delete clients[userId];
     if (trucksId[userId]) {
       await truck.update({ is_online: false }, { where: { truck_id: trucksId[userId] } })
@@ -304,9 +310,10 @@ async function stop(lat, long, userId, socket) {
   }
 }
 
-async function updateVendorLocation(lat, long, id, socket) {
+async function endRoute(lat, long, id, socket) {
   try {
     await truck.update({ lat: lat, long: long }, { where: { truck_id: parseInt(id) } })
+    let truckDetail = await truck.findOne({ where: { truck_id: id } })
     const allUsers = await user.findAll()
 
     for (const data of allUsers) {
@@ -314,7 +321,48 @@ async function updateVendorLocation(lat, long, id, socket) {
       const userLong = data.long;
       const userId = data.user_id;
 
-      
+      if (notifi[userId + id]) {
+        notifi[userId + id] = false;
+      }
+
+    }
+
+    return socket.emit('APIResponse', JSON.stringify({
+      success: true,
+      status_code: 200,
+      message: 'End Route Successfull',
+      end_data: [],
+    }));
+  } catch (error) {
+    console.log(error);
+    // return emitError(socket);
+  }
+}
+
+async function updateVendorLocation(lat, long, id, socket) {
+  try {
+    await truck.update({ lat: lat, long: long }, { where: { truck_id: parseInt(id) } })
+    let truckDetail = await truck.findOne({ where: { truck_id: id } })
+    const allUsers = await user.findAll()
+
+    for (const data of allUsers) {
+      const userLat = data.lat;
+      const userLong = data.long;
+      const userId = data.user_id;
+
+      const distance = calculateDistanceMiles(userLat, userLong, lat, long)
+      console.log("Distance", distance)
+      console.log("Notifi", notifi[userId + id])
+      if (!notifi[userId + id]) {
+        if (distance <= truckDetail.first_alert) {
+          notifi[userId + id] = true;
+          if (distance <= truckDetail.second_alert) {
+            middleware.CustomNotification("Truck Alert", `${truckDetail.truck_name} is pretty close to you`, data.fcm_token)
+          } else {
+            middleware.CustomNotification("Truck Alert", `${truckDetail.truck_name} is in your neighbourhood`, data.fcm_token)
+          }
+        }
+      }
     }
 
     await getAllUsersStatus(id, lat, long, socket)
@@ -577,6 +625,7 @@ async function getUserTrucks(lat, long, id, isCompass, socket) {
         const filtered = trucks.filter(truck => key == truck.truck_id);
         filteredTrucks.push(...filtered);
       }
+      const unfilteredTruckCount = Object.keys(uniqueTruckIds).length - filteredTrucks.length;
 
       // console.log(filteredTrucks)
       return socket.emit('APIResponse', JSON.stringify({
@@ -584,6 +633,7 @@ async function getUserTrucks(lat, long, id, isCompass, socket) {
         status_code: 200,
         message: 'Trucks Fetched Successfully',
         fav_truck_count: favTruckCount,
+        active_truck_count: unfilteredTruckCount,
         truck_data: filteredTrucks,
       }));
     })
@@ -591,6 +641,104 @@ async function getUserTrucks(lat, long, id, isCompass, socket) {
       console.error('Error:', error);
       // return emitError(socket);
     })
+}
+
+async function getUserActiveTrucks(lat, long, id, socket) {
+  try {
+    let userData = await user.findOne({ where: { user_id: id } })
+
+    var userLat, userLong;
+    if (userData) {
+      userLat = userData.lat;
+      userLong = userData.long;
+    }
+
+    const truckIds = Object.values(trucksId);
+    const uniqueTruckIds = [...new Set(truckIds)];
+
+    let favTrucks = await favTruck.findAll({ where: { user_id: id } })
+
+    const favTruckIds = favTrucks.map(favTruck => favTruck.truck_id);
+
+    const resultArray = [];
+
+    for (const value of uniqueTruckIds) {
+      let truckData = await truck.findOne({
+        where: { truck_id: value },
+        attributes: ["truck_id", "truck_name", "username", "lat", "long", "avatar_id", "vendor_id", "avatar_approved", "avatar_url", "thumbnail_url"]
+      })
+
+      var currentDistance = calculateDistance(userLat, userLong, truckData.lat, truckData.long)
+      if (currentDistance <= truckData.u_turn) {
+        await truck.update({ last_distance: currentDistance }, { where: { truck_id: truckData.truck_id } })
+        if (currentDistance > truckData.last_distance) {
+          truckData.dataValues.u_turn = true
+        } else {
+          truckData.dataValues.u_turn = false
+        }
+      } else {
+        truckData.dataValues.u_turn = false
+      }
+
+      if (favTruckIds.includes(truckData.truck_id)) {
+        truckData.dataValues.is_fav = true;
+      } else {
+        truckData.dataValues.is_fav = false;
+      }
+
+      const [userRating, rateDetail, reportData, avatarData, vendorData] = await Promise.all([
+        rate_truck.findOne({
+          attributes: ['star_count'],
+          where: { user_id: id, truck_id: truckData.truck_id }
+        }),
+        rate_truck.findAll({ where: { truck_id: truckData.truck_id } }),
+        report_data.findOne({ where: { user_id: id, truck_id: truckData.truck_id } }),
+        avatar.findOne({ where: { avatar_id: truckData.avatar_id } }),
+        vendor.findOne({ attributes: ['company_name'], where: { vendor_id: truckData.vendor_id } })
+      ]);
+
+      truckData.dataValues.company_name = vendorData.company_name
+
+      truckData.dataValues.user_rating = userRating?.star_count || 0;
+
+      const countOfResult = rateDetail.length;
+
+      let totalRating = 0;
+      for (let i = 0; i < rateDetail.length; i++) {
+        totalRating += rateDetail[i].star_count;
+      }
+
+      const averageRating = countOfResult > 0 ? totalRating / countOfResult : 0;
+
+      truckData.average_rating = parseFloat(averageRating.toFixed(2));
+
+      if (reportData) {
+        truckData.dataValues.report_id = reportData.msg_id;
+      } else {
+        truckData.dataValues.report_id = 0;
+      }
+
+      if (truckData.avatar_approved == 2) {
+        truckData.dataValues.image_url = truckData.avatar_url;
+        truckData.dataValues.thumbnail = truckData.thumbnail_url;
+      } else {
+        truckData.dataValues.image_url = avatarData.image_url;
+        truckData.dataValues.thumbnail = avatarData.thumbnail;
+      }
+
+      resultArray.push(truckData);
+    };
+    
+    return socket.emit('APIResponse', JSON.stringify({
+      success: true,
+      status_code: 200,
+      message: 'Trucks Fetched Successfully',
+      truck_data: resultArray,
+    }));
+  } catch (error) {
+    console.log(error);
+    return emitError(socket);
+  }
 }
 
 function calculateDistance(lat1, lon1, lat2, lon2) {
