@@ -42,6 +42,8 @@ const vendorRoute = require('./routes/vendor_routes');
 const commonRoute = require('./routes/common_routes')
 const adminRoute = require('./routes/admin_routes');
 const { where } = require("sequelize");
+const truckRingtone = require("./models/truck_ringtone");
+const rington = require("./models/ringtone");
 
 app.set('view engine', 'pug');
 app.use(express.urlencoded({ extended: false }));
@@ -225,7 +227,7 @@ async function uTurn(lat, long, id, ids, socket) {
         attributes: ['fcm_token'],
         where: { truck_id: truckId }
       })
-      middleware.CustomNotification("U-Turn Alert", `User is requesting U-Turn`, truckData.fcm_token)
+      middleware.CustomNotification("U-Turn Alert", `User is requesting U-Turn`, truckData.fcm_token, "default")
     })
 
     return socket.emit('APIResponse', JSON.stringify({
@@ -356,13 +358,30 @@ async function updateVendorLocation(lat, long, id, socket) {
       if (!notifi[userId]) {
         if (distance <= truckDetail.first_alert) {
           notifi[userId] = true;
+
+          let result = await truckRingtone.findOne({
+            where: {
+              truck_id: id,
+              user_id: userId
+            },
+            attributes: ["ringtone_id"]
+          })
+          
+          var ringtoneName;
+          let ringtone;
+          if(result){
+            ringtone = await rington.findOne({ where: { ringtone_id: result.ringtone_id}, attributes: ["en"]});
+          } else {
+            ringtone = await rington.findOne({ where: { ringtone_id: data.ringtone_id}, attributes: ["en"]})
+          }
+          ringtoneName = ringtone.en;
           if (distance <= truckDetail.second_alert) {
-            if(data.fcm_token){
-              middleware.CustomNotification("Truck Alert", `${truckDetail.truck_name} is pretty close to you`, data.fcm_token)
+            if (data.fcm_token) {
+              middleware.CustomNotification("Truck Alert", `${truckDetail.truck_name} is pretty close to you`, data.fcm_token, ringtoneName)
             }
           } else {
-            if(data.fcm_token){
-              middleware.CustomNotification("Truck Alert", `${truckDetail.truck_name} is in your neighbourhood`, data.fcm_token)
+            if (data.fcm_token) {
+              middleware.CustomNotification("Truck Alert", `${truckDetail.truck_name} is in your neighbourhood`, data.fcm_token, ringtoneName)
             }
           }
         }
@@ -660,9 +679,9 @@ async function getUserActiveTrucks(lat, long, id, socket) {
     const truckIds = Object.values(trucksId);
     const uniqueTruckIds = [...new Set(truckIds)];
     let activeTruckCount;
-    if(uniqueTruckIds.length == 0){
+    if (uniqueTruckIds.length == 0) {
       activeTruckCount = 0;
-    } else{
+    } else {
       activeTruckCount = uniqueTruckIds.length;
     }
 
@@ -675,7 +694,7 @@ async function getUserActiveTrucks(lat, long, id, socket) {
     }
 
     const favTruckIds = favTrucks.map(favTruck => favTruck.truck_id);
-      
+
     const resultArray = [];
 
     for (const value of uniqueTruckIds) {
@@ -744,7 +763,7 @@ async function getUserActiveTrucks(lat, long, id, socket) {
 
       resultArray.push(truckData);
     };
-    
+
     return socket.emit('APIResponse', JSON.stringify({
       success: true,
       status_code: 200,

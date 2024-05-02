@@ -583,7 +583,7 @@ const createPrivateEvent = async (req, res) => {
             console.log(truckData)
             if (truckData) {
                 if (!truckData.opt_out) {
-                    middleware.CustomNotification(event_name, language.new_event[lang_id], truckData.fcm_token)
+                    middleware.CustomNotification(event_name, language.new_event[lang_id], truckData.fcm_token, "default")
                 }
             }
         });

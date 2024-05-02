@@ -63,7 +63,7 @@ const mailSender = async (email,title, body) => {
   }
 }
 
-async function CustomNotification(title, body, fcmToken) {
+async function CustomNotification(title, body, fcmToken, sound) {
   // if (FCMToken.rows[0].FCMToken.length > 15) {
     const message = {
       data: {
@@ -77,7 +77,7 @@ async function CustomNotification(title, body, fcmToken) {
       apns: {
         payload: {
           aps: {
-            sound: "Brahms Lullaby.wav"
+            sound: `${sound}.wav`
           }
         }
       },
