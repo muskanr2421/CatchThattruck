@@ -77,7 +77,7 @@ async function CustomNotification(title, body, fcmToken) {
       apns: {
         payload: {
           aps: {
-            sound: "Brahms Lullaby.mp3"
+            sound: "Brahms Lullaby.wav"
           }
         }
       },
