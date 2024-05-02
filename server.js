@@ -352,10 +352,10 @@ async function updateVendorLocation(lat, long, id, socket) {
 
       const distance = calculateDistanceMiles(userLat, userLong, lat, long)
       console.log("Distance", distance)
-      console.log("Notifi", notifi[userId + id])
-      if (!notifi[userId + id]) {
+      console.log("Notifi", notifi[id])
+      if (!notifi[id]) {
         if (distance <= truckDetail.first_alert) {
-          notifi[userId + id] = true;
+          notifi[id] = true;
           if (distance <= truckDetail.second_alert) {
             if(data.fcm_token){
               middleware.CustomNotification("Truck Alert", `${truckDetail.truck_name} is pretty close to you`, data.fcm_token)
