@@ -248,7 +248,7 @@ const clearStopData = () => {
 
 async function stop(lat, long, userId, socket) {
   try {
-    const radius = 20; // 20km radius
+    const radius = 10; // 20km radius
 
     const userLat = lat;
     const userLong = long;
@@ -403,7 +403,7 @@ async function updateVendorLocation(lat, long, id, socket) {
 
 async function getAllUsersStatus(id, truckLat, truckLong, socket) {
   try {
-    const radius = 20;
+    const radius = 10;
 
     const query = `SELECT user_id, lat, \`long\`, isCompass
     FROM user HAVING
@@ -554,7 +554,7 @@ async function getUserTrucks(lat, long, id, isCompass, socket) {
     await user.update({ isCompass: false }, { where: { user_id: id } })
   }
 
-  const radius = 20; // 20km radius
+  const radius = 10; // 20km radius
   var favTruckCount;
 
   const query = `SELECT truck_id, truck_name, username, lat, \`long\`, avatar_id, vendor_id, avatar_approved, avatar_url, thumbnail_url FROM truck HAVING ${radius} >= (6371 * ACOS(COS(RADIANS(:userLat)) * COS(RADIANS(lat)) * COS(RADIANS(\`long\`) - RADIANS(:userLong)) + SIN(RADIANS(:userLat)) * SIN(RADIANS(lat))))`;
@@ -717,7 +717,7 @@ async function getUserActiveTrucks(lat, long, id, socket) {
         truckData.dataValues.u_turn = false
       }
 
-      truckData.dataValues.in_proximity = distance <= 20;
+      truckData.dataValues.in_proximity = currentDistance <= 10;
 
       if (favTruckIds.includes(truckData.truck_id)) {
         truckData.dataValues.is_fav = true;

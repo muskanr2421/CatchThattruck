@@ -107,7 +107,7 @@ const getUserTrucks = async (req, res) => {
 
         const userLat = "22.736767113404927";
         const userLong = "75.9066966526162";
-        const radius = 20; // 20km radius
+        const radius = 10; // 20km radius
 
         const query = `SELECT truck_id, truck_name, username, lat, \`long\`, avatar_id, avatar_approved, avatar_url, thumbnail_url FROM truck HAVING ${radius} >= (6371 * ACOS(COS(RADIANS(:userLat)) * COS(RADIANS(lat)) * COS(RADIANS(\`long\`) - RADIANS(:userLong)) + SIN(RADIANS(:userLat)) * SIN(RADIANS(lat))))`;
         sequelize.query(query, {
@@ -238,7 +238,7 @@ const getFavouriteTruckList = async (req, res) => {
         const userLat = userData.lat;
         const userLong = userData.long;
 
-        const radius = 20; // 20km radius
+        const radius = 10; // 20km radius
         var truckIDs;
 
         // const query = `SELECT truck_id, truck_name, username, lat, \`long\`, avatar_id, vendor_id, avatar_approved, avatar_url FROM truck HAVING ${radius} >= (6371 * ACOS(COS(RADIANS(:userLat)) * COS(RADIANS(lat)) * COS(RADIANS(\`long\`) - RADIANS(:userLong)) + SIN(RADIANS(:userLat)) * SIN(RADIANS(lat))))`;
@@ -301,7 +301,7 @@ const getFavouriteTruckList = async (req, res) => {
             const averageRating = countOfResult > 0 ? totalRating / countOfResult : 0;
 
             const distance = calculateDistance(truck.lat, truck.long, userLat, userLong);
-            const in_proximity = distance <= 20;
+            const in_proximity = distance <= 10;
 
             let off_duty;
             if (truck.is_online) {
