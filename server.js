@@ -353,8 +353,8 @@ async function updateVendorLocation(lat, long, id, socket) {
       const userId = data.user_id;
 
       const distance = calculateDistanceMiles(userLat, userLong, lat, long)
-      console.log("Distance", distance)
-      console.log("Notifi", notifi[userId])
+      // console.log("Distance", distance)
+      // console.log("Notifi", notifi[userId])
       if (!notifi[userId]) {
         if (distance <= truckDetail.first_alert) {
           notifi[userId] = true;
@@ -370,11 +370,14 @@ async function updateVendorLocation(lat, long, id, socket) {
           var ringtoneName;
           let ringtone;
           if (result) {
+            console.log("Here", result.ringtone_id)
             ringtone = await rington.findOne({ where: { ringtone_id: result.ringtone_id }, attributes: ["en"] });
           } else {
+            console.log("Here", data.ringtone_id)
             ringtone = await rington.findOne({ where: { ringtone_id: data.ringtone_id }, attributes: ["en"] })
           }
           ringtoneName = ringtone.en;
+          console.log(ringtoneName)
           if (distance <= truckDetail.second_alert) {
             if (data.fcm_token) {
               middleware.CustomNotification("Truck Alert", `${truckDetail.truck_name} is pretty close to you`, data.fcm_token, ringtoneName)

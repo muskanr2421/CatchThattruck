@@ -8,7 +8,8 @@ const user = sequelize.define("user", {
         primaryKey : true
     },
     device_id: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        unique: true
     },
     lat: {
         type: DataTypes.STRING
