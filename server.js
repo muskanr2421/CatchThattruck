@@ -83,7 +83,7 @@ app.use('/api/dev', commonRoute);
 io.on('connection', async (socket) => {
   const userId = socket.id;
   console.log("Socket ID : ", userId);
-  let userTruckTimeout, userTimeout, truckTimeout;
+  let userTruckTimeout, userTimeout, truckTimeout, userActiveTruckTimeout;
 
   socket.on('API', async (msg) => {
     console.log(msg)
@@ -94,6 +94,10 @@ io.on('connection', async (socket) => {
       // Clear existing interval, if any
       if (userTruckTimeout) {
         clearTimeout(userTruckTimeout);
+      }
+
+      if (userActiveTruckTimeout) {
+        clearTimeout(userActiveTruckTimeout);
       }
 
       if (userTimeout) {
@@ -141,14 +145,17 @@ io.on('connection', async (socket) => {
                   await getUserTrucks(data.lat, data.long, data.id, data.isCompass, socket);
                   userTruckTimeout = setTimeout(getData, 15000);
                 };
-
                 getData();
               } else {
                 return emitError(socket);
               }
               break;
             case '/getActiveUserTrucks':
-              await getUserActiveTrucks(data.lat, data.long, data.id, socket)
+              const getData = async () => {
+                await getUserActiveTrucks(data.lat, data.long, data.id, socket)
+                userActiveTruckTimeout = setTimeout(getData, 15000);
+              };
+              getData();
               break;
             case '/getUserDetails':
               // await getAllUsersStatus(socket);
@@ -214,6 +221,7 @@ io.on('connection', async (socket) => {
     }
     delete trucksId[userId];
     clearTimeout(userTruckTimeout);
+    clearTimeout(userActiveTruckTimeout);
     clearTimeout(userTimeout);
     clearTimeout(truckTimeout);
   });
