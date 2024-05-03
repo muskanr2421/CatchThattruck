@@ -366,13 +366,13 @@ async function updateVendorLocation(lat, long, id, socket) {
             },
             attributes: ["ringtone_id"]
           })
-          
+
           var ringtoneName;
           let ringtone;
-          if(result){
-            ringtone = await rington.findOne({ where: { ringtone_id: result.ringtone_id}, attributes: ["en"]});
+          if (result) {
+            ringtone = await rington.findOne({ where: { ringtone_id: result.ringtone_id }, attributes: ["en"] });
           } else {
-            ringtone = await rington.findOne({ where: { ringtone_id: data.ringtone_id}, attributes: ["en"]})
+            ringtone = await rington.findOne({ where: { ringtone_id: data.ringtone_id }, attributes: ["en"] })
           }
           ringtoneName = ringtone.en;
           if (distance <= truckDetail.second_alert) {
@@ -587,6 +587,8 @@ async function getUserTrucks(lat, long, id, isCompass, socket) {
           truck.u_turn = false
         }
 
+        truck.in_proximity = true;
+
         if (favTruckIds.includes(truck.truck_id)) {
           truck.is_fav = true;
         } else {
@@ -703,7 +705,7 @@ async function getUserActiveTrucks(lat, long, id, socket) {
         attributes: ["truck_id", "truck_name", "username", "lat", "long", "avatar_id", "vendor_id", "avatar_approved", "avatar_url", "thumbnail_url"]
       })
 
-      var currentDistance = calculateDistance(userLat, userLong, truckData.lat, truckData.long)
+      const currentDistance = calculateDistance(userLat, userLong, truckData.lat, truckData.long)
       if (currentDistance <= truckData.u_turn) {
         await truck.update({ last_distance: currentDistance }, { where: { truck_id: truckData.truck_id } })
         if (currentDistance > truckData.last_distance) {
@@ -714,6 +716,8 @@ async function getUserActiveTrucks(lat, long, id, socket) {
       } else {
         truckData.dataValues.u_turn = false
       }
+
+      truckData.dataValues.in_proximity = distance <= 20;
 
       if (favTruckIds.includes(truckData.truck_id)) {
         truckData.dataValues.is_fav = true;
@@ -745,7 +749,7 @@ async function getUserActiveTrucks(lat, long, id, socket) {
 
       const averageRating = countOfResult > 0 ? totalRating / countOfResult : 0;
 
-      truckData.average_rating = parseFloat(averageRating.toFixed(2));
+      truckData.dataValues.average_rating = parseFloat(averageRating.toFixed(2));
 
       if (reportData) {
         truckData.dataValues.report_id = reportData.msg_id;
